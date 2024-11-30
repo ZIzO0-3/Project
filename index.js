@@ -1,4 +1,4 @@
-/*const express = require('express');
+const express = require('express');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const authRoutes = require('./routes/auth');
@@ -8,17 +8,15 @@ dotenv.config();
 const app = express();
 const session = require('express-session');
 
-
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 app.use(session({
-  secret: process.env.SESSION_SECRET || 'your-secret-key',  // You can set this as an environment variable
-  resave: false,  // Don't save the session if unmodified
-  saveUninitialized: true,  // Save uninitialized sessions
-  cookie: { secure: false }  // Set to true if you're using HTTPS
+  secret: "FO32",  
+  resave: true , 
+  saveUninitialized: true,  
+  cookie: { secure: false }  
 }));
 function isAuthenticated(req, res, next) {
   if (req.session.userId) {  
@@ -40,7 +38,8 @@ app.get('/', (req, res) => {
 });
 
 app.get('/home', (req, res) => {
-  res.render('index');
+  const user = req.session.user || null; 
+  res.render('index', { user }); 
 });
 
 app.get('/login', (req, res) => {
@@ -57,11 +56,11 @@ app.post('/login', async (req, res) => {
         errorMessage: 'Invalid email or password'
       });
     }
-
-    
-    req.session.userId = user._id;
-
-    res.redirect('/home');  
+if (user && user.password === password) {
+      req.session.user = user; 
+      return res.redirect('/home'); 
+    }
+      
   } catch (err) {
     console.error('Error during login:', err);
     res.status(500).json({ error: 'Internal Server Error' });
@@ -75,156 +74,33 @@ app.get('/signup', (req, res) => {
 app.post('/signup', async (req, res) => {
   const { username, studentId, email, password } = req.body;
 
+  // Validate required fields
+  if (!username || !studentId || !email || !password) {
+    return res.render('signup', { 
+      errorMessage: 'All fields are required.' 
+    });
+  }
+
   try {
-    const existingUser = await User.findOne({ $or: [{ email: email }, { studentId: studentId }] });
-console.log(existingUser) 
+        const existingUser = await User.findOne({ 
+      $or: [{ email: email }, { userId: studentId }] 
+    });
+
     if (existingUser) {
       return res.render('signup', {
-        errorMessage: 'You have already registered your account before. <a href="/login">Click here</a> to login.'
+        errorMessage: 'You have already registered. <a href="/login">Click here</a> to login.'
       });
     }
 
-    const newUser = new User({
-      username,
-      userId: studentId,
-      email,
-      password
-    });
-
-    await newUser.save();
-    console.log (newUser) 
-    res.redirect('/login');
-  } catch (err) {
-    console.error('Error during signup:', err);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-});
-
-app.get('/reset-password', (req, res) => {
-  res.render('reset-password');
-});
-app.get('/about',isAuthenticated, (req, res) => {
-  res.render('about');
-});
-
-app.get('/logout', (req, res) => {
-  req.session.destroy((err) => {
-    if (err) {
-      return res.status(500).json({ error: 'Could not log out' });
-    }
-    res.redirect('/login');  
-  });
-});
-
-
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
-*/
-
-const express = require('express');
-const mongoose = require('mongoose');
-const dotenv = require('dotenv');
-const authRoutes = require('./routes/auth');
-const path = require('path');
-const User = require('./models/User');
-dotenv.config();
-const app = express();
-const session = require('express-session');
-
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
-app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, 'views'));
-app.use(session({
-  secret: "Fo" ,
-  resave: false,
-  saveUninitialized: true,
-  cookie: { secure: false }  // Set to true for HTTPS in production
-}));
-
-
-function isAuthenticated(req, res, next) {
-  if (req.session.userId) {
-    return next();  
-  } else {
-    res.redirect('/login');  
-  }
-}
-
-
-app.use(express.static(path.join(__dirname, 'project', 'public')));
-
-// MongoDB connection
-mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => console.log('MongoDB connected'))
-  .catch(err => console.log(err));
-
-// Routes and Middleware
-app.use('/api/auth', authRoutes);
-
-// Home route
-app.get('/', (req, res) => {
-  res.render('index');
-});
-
-// Protected home route
-app.get('/home', isAuthenticated, (req, res) => {
-  res.render('index');
-});
-
-// Login routes
-app.get('/login', (req, res) => {
-  res.render('login', { errorMessage: null });
-});
-
-app.post('/login', async (req, res) => {
-  const { email, password } = req.body;
-
-  try {
-    const user = await User.findOne({ email });
-
-    if (!user || user.password !== password) {
-      return res.render('login', { errorMessage: 'Invalid email or password' });
-    }
-
-    req.session.userId = user._id;  // Set the user ID in the session
-    res.redirect('/home');
-  } catch (err) {
-    console.error('Login error:', err);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-});
-
-
-app.get('/signup', (req, res) => {
-  res.render('signup', { errorMessage: null });
-});
-
-app.post('/signup', async (req, res) => {
-  const { username, studentId, email, password } = req.body;
-
-  try {
-    const existingUser = await User.findOne({ $or: [{ email: email }, { studentId: studentId }] });
-    console.log(existingUser); 
     
-    if (existingUser) {
-      return res.render('signup', {
-        errorMessage: 'You have already registered your account before. <a href="/login">Click here</a> to login.'
-      });
-    }
-
     const newUser = new User({
       username,
-      userId: studentId,
+      userId: studentId, 
       email,
       password
     });
 
     await newUser.save();
-    console.log(newUser);
     res.redirect('/login');
   } catch (err) {
     console.error('Error during signup:', err);
@@ -232,25 +108,45 @@ app.post('/signup', async (req, res) => {
   }
 });
 
-app.get('/reset-password', (req, res) => {
-  res.render('reset-password');
+app.post('/reset-password', (req, res) => {
+  const { email } = req.body;
+  if (!email) {
+    return res.status(400).send('Email is required.');
+  }
+
+   console.log(`Reset password link sent to ${email}`);
+  res.send('Reset password link has been sent to your email.');
 });
 
-app.get('/about', isAuthenticated, (req, res) => {
+
+app.get('/about',isAuthenticated, (req, res) => {
+  if(!isAuthenticated) {
+    res.render("login") 
+   } else {
   res.render('about');
+    } 
+})
+
+app.use((req, res, next) => {
+  res.locals.user = req.session.user || null; 
+  next();
 });
 
-app.get('/logout', (req, res) => {
+app.post('/logout', (req, res) => {
   req.session.destroy((err) => {
     if (err) {
-      return res.status(500).json({ error: 'Could not log out' });
+      console.error('Failed to destroy session:', err);
+      return res.status(500).send('Failed to log out.');
     }
-    res.redirect('/login');  // Redirect to login page after logout
+    res.redirect('/login'); 
   });
 });
 
-// Server setup
+
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+
+

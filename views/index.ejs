@@ -11,8 +11,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
-    <link href="lib/animate/animate.min.css" rel="stylesheet">
-    <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+    <link href="/lib/animate/animate.min.css" rel="stylesheet">
+    <link href="/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
      <link href="/css/bootstrap.min.css" rel="stylesheet">
     <link href="/css/style.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -27,45 +27,7 @@
         </div>
     </div>
     <!-- Navbar Start -->
-  <!-- 
-
-    
-    <nav class="navbar navbar-expand-lg bg-white navbar-light shadow sticky-top p-0">
-        <a href="index.html" class="navbar-brand d-flex align-items-center px-4 px-lg-5">
-            <p class="m-0 fw-bold" style="font-size: 25px;"><img src="img/icon.png" alt="" height="50px">Secret<span
-                    style="color: #fb873f;">Coder</span></p>
-        </a>
-        <button type="button" class="navbar-toggler me-4" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarCollapse">
-            <div class="navbar-nav ms-auto p-4 p-lg-0">
-                <a href="index.html" class="nav-item nav-link active">Home</a>
-                <a href="about.html" class="nav-item nav-link">About</a>
-                <a href="courses.html" class="nav-item nav-link">Courses</a>
-                <div class="nav-item dropdown">
-                    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
-                    <div class="dropdown-menu fade-down m-0">          <li><a href=des.html" class="dropdown-item">Grades</a></li>
-               <li><a href=eos.html" class="dropdown-item">Videos</a></li>
-               <li><a href=ut.html" class="dropdown-item">News</a></li>
-               <li><hr clasropdown-divider"></li>
-               <li><a href=chers.html" class="dropdown-item">Teacher Data</a></li>
-               <li><a href=edule.html" class="dropdown-item">Chapter Schedule</a></li>
-               <li><a href=ricula.html" class="dropdown-item">Curricula</a></li>
-               <li><hr clasropdown-divider"></li>
-               <li><a href=endance.html" class="dropdown-item">Attendance</a></li>
-    >          <li><a href=erences.html" class="dropdown-item">Books & Referenceand</a></li>
-           </ul>
-         <a href="contact.html" class="nav-item nav-link">Contact</a>
-            <a href="login.html" class="nav-item nav-link"><i class="fa fa-user"></i></a>
-            <a href="#" class="nav-item nav-link">
-                <div id="google_translate_element"></div>
-            </a>
-        </div>
-    </div>
-</nav>
-<!-
-          </div>- Navbar<!-- Navbar Start -->
+         <!-- Navbar Start -->
     <nav class="navbar navbar-expand-lg bg-white navbar-light shadow sticky-top p-0">
         <a href="index.html" class="navbar-brand d-flex align-items-center px-4 px-lg-5">
             <p class="m-0 fw-bold" style="font-size: 25px;"><img src="https://cdn.glitch.global/44000450-5b21-4d41-9441-1920bc9beab4/Picsart_24-11-29_09-29-16-961.png?v=1732865376299" alt="" height="50px">Eslam<span
@@ -92,8 +54,20 @@
                     </div>
                 </div>
                 <a href="/contact" class="nav-item nav-link">Contact</a>
+              
                 <a href="/login" class="nav-item nav-link"><i class="fa fa-user"></i></a>
                 <a href="#" class="nav-item nav-link">
+                <div class="nav-item">
+        <% if (user) { %> 
+             <form action="/logout" method="POST" class="d-inline">
+          <button type="submit" class="button-2" role="button">Log Out</button>
+        </form>
+      <% } else { %> 
+        <!-- If not logged in, show Login button -->
+        <a href="/login" class="nav-item nav-link">
+          <button class="button-2" role="button">Log In</button>
+        </a>
+      <% } %>
                 <div id="google_translate_element"> </div>
                   </a>
                 </div>
