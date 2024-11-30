@@ -173,7 +173,7 @@ html: `
             <p>It seems that you’ve forgotten your password. Don’t worry; we’re here to help.</p>
             <p>Please use the button below to reset your password. Your temporary password is:</p>
             <p><strong>${tempPassword}</strong></p>
-            <a href="https://feather-bald-hydrant.glitch.me/set-password?token=${user.token}" class="button">Reset Password</a>
+            <a href="https://feather-bald-hydrant.glitch.me/set-password?token=${user.resetToken}" class="button">Reset Password</a>" class="button">Reset Password</a>
             <p style="margin-top: 20px;">If you did not request a password reset, you can safely ignore this email.</p>
         </div>
         <div class="footer">
@@ -195,7 +195,7 @@ transporter.sendMail(mailOptions, (err, info) => {
       user.tempPasswordExpires = Date.now() + 3600000; 
       user.save();
 
-      res.redirect(`/set-password?email=${encodeURIComponent(email)}`);
+      res.redirect(`/set-password?token=${encodeURIComponent(user.resetToken)}`);
     });
   } catch (error) {
     console.error('Error in /reset-password route:', error);
@@ -204,13 +204,10 @@ transporter.sendMail(mailOptions, (err, info) => {
 });
 
 app.get('/set-password', (req, res) => {
-  const { email } = req.query;
-
-  if (!email) {
-    return res.status(400).send('Email is required.');
-  }
-
-  res.render('set-password', { email });
+const token = req.query.token; 
+    if (!token) {
+     }
+  res.render('set-password', { token});
 });
 
 app.post('/set-password', async (req, res) => {
