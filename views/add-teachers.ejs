@@ -3,10 +3,10 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Eslam Mashhor</title>
+    <title>Add Teacher - Eslam Mashhor</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="" name="keywords">
-    <meta content="مدرسة الشهيد اسلام مشهور الرسمية المتميزة لغات. " name="description">
+    <meta content="مدرسة الشهيد اسلام مشهور الرسمية المتميزة لغات." name="description">
     <link href="https://cdn.glitch.global/44000450-5b21-4d41-9441-1920bc9beab4/Picsart_24-11-29_09-29-16-961.png?v=1732865376299" rel="icon">
     <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
@@ -20,7 +20,7 @@
 <body>
     <!-- Success Message Box -->
     <div id="successMessage" class="alert alert-success alert-dismissible fade show" role="alert" style="display: none;">
-        <strong>Success!</strong> Password has been updated successfully.
+        <strong>Success!</strong> Teacher has been added successfully.
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" onclick="closeSuccessMessage()"></button>
     </div>
 
@@ -64,11 +64,11 @@
         <div class="container py-5">
             <div class="row justify-content-center">
                 <div class="col-lg-10 text-center">
-                    <h1 class="display-3 text-white animated slideInDown">Login</h1>
+                    <h1 class="display-3 text-white animated slideInDown">Add Teacher</h1>
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb justify-content-center">
                             <li class="breadcrumb-item"><a class="text-white" href="/home">Home</a></li>
-                            <li class="breadcrumb-item text-white active" aria-current="page">Login</li>
+                            <li class="breadcrumb-item text-white active" aria-current="page">Add Teacher</li>
                         </ol>
                     </nav>
                 </div>
@@ -76,60 +76,74 @@
         </div>
     </div>
 
+    <!-- Add Teacher Form Start -->
     <div class="container-xxl py-2 mt-4">
         <div class="container">
             <div class="row g-4 wow fadeInUp" data-wow-delay="0.5s">
                 <center>
-                    <form class="shadow p-4" style="max-width: 550px;" action="/login" method="POST">
+                    <form class="shadow p-4" style="max-width: 550px;" action="/add-teachers" method="POST">
                         <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
-                            <h1 class="mb-5 bg-white text-center px-3">Login</h1>
+                            <h1 class="mb-5 bg-white text-center px-3">Add Teacher</h1>
                         </div>
-        <% if (accountCreated) { %>
-  <div class="alert alert-success alert-dismissible fade show" role="alert">
-    Done Creating Your Account. You can login now.
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-  </div>
-<% } %>
 
-<% if (passwordUpdated) { %>
-  <div class="alert alert-success alert-dismissible fade show" role="alert">
-    <strong>Success!</strong> Password has been updated successfully.
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-  </div>
-<% } %>
+                        <% if (successMessage) { %>
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            Teacher added successfully!
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                        <% } %>
 
-<% if (errorMessage) { %>
-  <div class="alert alert-danger alert-dismissible fade show" role="alert">
-    <%= errorMessage %>
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-  </div>
-<% } %>
-
+                        <% if (errorMessage) { %>
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <%= errorMessage %>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                        <% } %>
 
                         <div class="row g-3">
                             <div class="col-12">
                                 <div class="form-floating">
-                                    <input type="email" class="form-control" id="email" name="email" placeholder="Email Address" required>
-                                    <label for="email">Email Address</label>
+                                    <input type="text" class="form-control" id="name" name="name" placeholder="Teacher Name" required>
+                                    <label for="name">Teacher Name</label>
                                 </div>
                             </div>
+
                             <div class="col-12">
                                 <div class="form-floating">
-                                    <input type="password" class="form-control" id="password" name="password" placeholder="Password" required minlength="6">
-                                    <label for="password">Password</label>
+                                    <input type="text" class="form-control" id="subject" name="subject" placeholder="Subject" required>
+                                    <label for="subject">Subject</label>
                                 </div>
                             </div>
 
                             <div class="col-12">
-                                <p><a href="/reset-password">Forgot password?</a></p>
+    <div class="form-floating">
+        <select class="form-control" id="grade" name="grade" required color= white>
+            <option value="">Select Grade </option>
+            <option value="1st Secondary">1st Secondary</option>
+            <option value="2nd Secondary">2nd Secondary</option>
+            <option value="both">1st & 2nd secondary </option>
+        </select>
+        <label for="grade">Grade</label>
+    </div>
+</div>
+                            <!-- Teacher Number Input -->
+                            <div class="col-12">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" id="teacherNumber" name="teacherNumber" placeholder="Teacher Number" required>
+                                    <label for="teacherNumber">Teacher Number</label>
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <div class="form-floating">
+                                    <input type="file" class="form-control" id="photo" name="photo" required>
+                                    <label for="photo">Teacher Photo</label>
+                                </div>
                             </div>
                         </div>
-                        <div class="col-12">
-                            <button class="btn text-light w-100 py-3" type="submit">Login</button>
-                        </div>
 
-                        <div class="col-12 text-center">
-                            <p>Don't have an account? <a class="text-decoration-none" href="/signup">Signup</a></p>
+                        <div class="col-12">
+                            <button class="btn text-light w-100 py-3" type="submit">Add Teacher</button>
                         </div>
                     </form>
                 </center>
@@ -145,25 +159,23 @@
                     <h4 class="text-white mb-3">Quick Link</h4>
                     <p><a class="text-light" href="about.html">About Us</a></p>
                     <p><a class="text-light" href="contact.html">Contact Us</a></p>
-                    <p><a class="text-light" href="privacy.htmm">Privacy Policy</a></p>
+                    <p><a class="text-light" href="privacy.html">Privacy Policy</a></p>
                     <p><a class="text-light" href="terms.html">Terms & Condition</a></p>
                     <p><a class="text-light" href="faqs-help.html">FAQs & Help</a></p>
                 </div>
                 <div class="col-lg-4 col-md-6">
-                    <h4 class="text-white mb-3">Contact</h4>
-                    <p class="mb-2"><i class="fa fa-map-marker-alt me-3"></i>11 سيد أبو العلا، قسم النزهة، محافظة القاهرة‬</p>
-                    <p class="mb-2"><i class="fa fa-phone-alt me-3"></i>+20 0123456789</p>
+                    <h4 class="text-white mb-3">Contact Info</h4>
+                    <p class="mb-2"><i class="fa fa-phone me-3"></i>+1 234 567 890</p>
                     <p class="mb-2"><i class="fa fa-envelope me-3"></i>eslammashor-business@gmail.com</p>
                     <div class="d-flex pt-2">
                         <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-facebook-f"></i></a>
                         <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-linkedin-in"></i></a>
                     </div>
-                </div>            
+                </div>
             </div>
         </div>
     </footer>
-    <!-- Footer End -->
-
+    
     <!-- Back to Top -->
     <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
 
@@ -177,16 +189,6 @@
 
     <!-- Template Javascript -->
     <script src="/js/main.js"></script>
-    <script>
-  window.onload = function() {
-    const successMessage = document.getElementById('successMessage'); 
-    if (successMessage) {
-            setTimeout(function() {
-        successMessage.style.display = 'none';
-      }, 7000); 
-    }        
-  };
-</script>
 </body>
 
 </html>

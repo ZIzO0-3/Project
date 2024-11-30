@@ -11,10 +11,14 @@ const session = require('express-session');
 const resetPasswordRoute = require('./routes/resetPasswordRoute');
 const flash = require('connect-flash'); // Add this line
 dotenv.config();
+const isAdmin = require('./routes/isAdmins'); // Import the isAdmin middleware
+const Teacher = require('./models/Teacher'); // Teacher model
+const teacherRoutes = require('./routes/teachers'); // Assuming the route is in routes/teachers.js
+const addTeachersRoutes = require('./routes/add-teachers');
 
 const app = express();
 
-  app.use(flash());
+app.use(flash());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.set('view engine', 'ejs');
@@ -24,7 +28,10 @@ app.use(session({
   secret: "FO32",  
   resave: true, 
   saveUninitialized: true,  
-  cookie: { secure: false }  
+  cookie: {
+    secure: false, // Use true if using HTTPS
+    maxAge: 1000 * 60 * 60 * 24 // 1 day
+  }
 }));
 
 
@@ -34,23 +41,24 @@ mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopol
   .catch(err => console.log(err));
 
 function isAuthenticated(req, res, next) {
-  if (req.session.userId) {  
-    return next();  
-  } else {
-    res.redirect('/login');  
+  if (req.session && req.session.user) {
+    req.user = req.session.user;
+    return next(); 
   }
+  res.redirect('/login'); 
 }
+
 app.use((req, res, next) => {
   res.locals.messages = req.flash('error'); 
   res.locals.successMessages = req.flash('success'); 
   next();
 });
-
+//app.use('/', addTeachersRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/reset-password', resetPasswordRoute);
 
 app.get('/', (req, res) => {  
-  const user = req.session.user || null; 
+  const user = req.session.user ||  null; 
   res.render('index', { user });
 });
 
@@ -60,12 +68,17 @@ app.get('/home', (req, res) => {
 });
 
 app.get('/login', (req, res) => {
-  const passwordUpdated = req.session.passwordUpdated || false; 
-  const errorMessage = req.flash('error');
-  req.session.passwordUpdated = false; 
+  const passwordUpdated = req.session.passwordUpdated || false;
+  const accountCreated = req.session.accountCreated || false;
+  const errorMessage = req.session.errorMessage || null; 
+  req.session.passwordUpdated = false;
+  req.session.accountCreated = false;
+
+  req.session.errorMessage = null; 
   res.render('login', {
     passwordUpdated: passwordUpdated,
-    errorMessage: errorMessage.length > 0 ? errorMessage[0] : null
+    accountCreated,
+    errorMessage: errorMessage,
   });
 });
 
@@ -74,9 +87,9 @@ app.post('/login', async (req, res) => {
   try {
     const user = await User.findOne({ email });
     if (!user || user.password !== password) {
-  req.flash('error', 'Invalid email or password');
-  return res.redirect('/login');
-}
+      req.session.errorMessage = 'Invalid email or password'; 
+      return res.redirect('/login');
+    }
     req.session.user = { id: user._id, email: user.email };
     res.redirect('/home');
   } catch (err) {
@@ -90,25 +103,36 @@ app.get('/signup', (req, res) => {
 });
 
 app.post('/signup', async (req, res) => {
-  const { username, studentId, email, password } = req.body;
-
-  if (!username || !studentId || !email || !password) {
+  const { username, studentId, email, password,grade } = req.body;
+   if (!username || !studentId || !email || !password) {
     return res.render('signup', { errorMessage: 'All fields are required.' });
   }
 
   try {
-    const existingUser = await User.findOne({ $or: [{ email: email }, { userId: studentId }] });
-
+     const existingUser = await User.findOne({
+      $or: [{ email: email }, { userId: studentId }],
+    });
     if (existingUser) {
-      return res.render('signup', { errorMessage: 'You have already registered. <a href="/login">Click here</a> to login.' });
+      return res.render('signup', {
+        errorMessage:
+          'You have already registered. <a href="/login">Click here</a> to login.',
+      });
     }
-
-    const newUser = new User({ username, userId: studentId, email, password });
+    const newUser = new User({
+      username,
+      userId: studentId,
+      email,
+      password, 
+      grade
+    });
     await newUser.save();
+    req.session.accountCreated = true;
     res.redirect('/login');
   } catch (err) {
     console.error('Error during signup:', err);
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(500).render('signup', {
+      errorMessage: 'An unexpected error occurred. Please try again later.',
+    });
   }
 });
 
@@ -209,9 +233,9 @@ const token = req.query.token;
 
 app.post('/set-password', async (req, res) => {
   const { tempPassword, newPassword, email } = req.body;
-const token = req.query.token; // Getting the token from the query string
+const token = req.query.token; 
 
-  console.log("Token from URL:", token); // Debugging: Check if token is being received
+  console.log("Token from URL:", token); 
   
   if (!newPassword || newPassword.length < 6) {
     return res.status(400).send('Password must be at least 6 characters long');
@@ -255,6 +279,15 @@ const token = req.query.token; // Getting the token from the query string
 app.get('/about', isAuthenticated, (req, res) => {
   res.render('about');
 });
+app.get('/teachers', isAuthenticated, (req, res) => {
+  res.render('team');
+});
+app.get('/add-teachers', isAuthenticated, isAdmin, (req, res) => {
+  const user = req.session.user || null; 
+      const successMessage = req.query.successMessage || null;
+      const errorMessage = req.query.errorMessage || null; 
+  res.render('add-teachers', {user, successMessage, errorMessage});  // Pass successMessage to the EJS template
+});
 
 app.use((req, res, next) => {
   res.locals.messages = req.flash('error');       // Pass error messages
@@ -263,15 +296,16 @@ app.use((req, res, next) => {
 });
 
 
-app.post('/logout', (req, res) => {
+app.get('/logout', (req, res) => {
   req.session.destroy((err) => {
     if (err) {
-      console.error('Failed to destroy session:', err);
-      return res.status(500).send('Failed to log out.');
+      console.error('Error destroying session:', err);
+      return res.redirect('/home');
     }
     res.redirect('/login'); 
   });
 });
+
 
 app.post('/update-password', (req, res) => {
   const { userId, newPassword } = req.body;
@@ -290,6 +324,7 @@ app.post('/update-password', (req, res) => {
     res.status(404).send('User not found');
   }
 });
+app.use('/', teacherRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
