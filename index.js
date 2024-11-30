@@ -5,7 +5,11 @@ const authRoutes = require('./routes/auth');
 const path = require('path');
 const User = require('./models/User');
 dotenv.config();
+const bcrypt = require('bcryptjs');
+const crypto = require('crypto');
+const nodemailer = require('nodemailer');
 const app = express();
+const resetPasswordRoute = require('./routes/resetPasswordRoute'); // Update the path if necessary
 const session = require('express-session');
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -107,20 +111,125 @@ app.post('/signup', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+app.use('/reset-password', resetPasswordRoute);
+
 app.get('/reset-password', (req, res) => {
   res.render('reset-password', { errorMessage: null });
 });
-app.post('/reset-password', (req, res) => {
+app.post('/reset-password', async (req, res) => {
   const { email } = req.body;
+
+  // Ensure email is provided
   if (!email) {
     return res.status(400).send('Email is required.');
   }
- 
-  
-   console.log(`Reset password link sent to ${email}`);  
-    res.redirect('/set-password');
- // res.send('Reset password link has been sent to your email.');
+
+  try {
+    // Check if the user exists in the database
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(400).send('No user found with that email address.');
+    }
+
+    // Generate a temporary password
+    const tempPassword = crypto.randomBytes(4).toString('hex'); // Temporary password (8 characters)
+    
+    // Log the temporary password for debugging
+    console.log(`Generated temporary password for ${email}: ${tempPassword}`);
+
+    // Configure the email transport
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: "eslammashorr@gmail.com", // Your email address
+        pass: "ukug efhf ivco auua" , // Your email password or app password
+      },
+    });
+
+    const mailOptions = {
+      from: "eslammashorr@gmail.com",
+      to: user.email,
+      subject: 'Password Reset Request',
+      text: `You requested a password reset. Your temporary password is: \n\n${tempPassword}\n\n` +
+            `Please use this temporary password to reset your password. This password is valid for 1 hour.`,
+    };
+
+    // Send the email with the temporary password
+    transporter.sendMail(mailOptions, (err, info) => {
+      if (err) {
+        console.error('Error sending email:', err);
+        return res.status(500).send('Failed to send email.');
+      }
+
+      // Update the user's temporary password in the database
+      user.tempPassword = bcrypt.hashSync(tempPassword, 10); // Hash the temporary password
+      user.tempPasswordExpires = Date.now() + 3600000; // Temporary password valid for 1 hour
+      user.save();
+
+      // Log the successful sending of the reset password email
+      console.log(`Reset password link sent to ${email}`);
+
+      // Redirect to the /set-password route (pass the email as query parameter or in session)
+      res.redirect(`/set-password?email=${encodeURIComponent(email)}`);
+    });
+
+  } catch (error) {
+    console.error('Error in /reset-password route:', error);
+    res.status(500).send('Internal Server Error');
+  }
 });
+
+// GET route to render the set-password page
+app.get('/set-password', (req, res) => {
+  const { email } = req.query;
+  
+  if (!email) {
+    return res.status(400).send('Email is required.');
+  }
+  
+  // Render the set-password page, passingthe email to the view
+  res.render('set-password', { email });
+});
+
+// POST route for updating the password
+app.post('/set-password', async (req, res) => {
+  const { tempPassword, newPassword, email } = req.body;
+
+  if (!newPassword || newPassword.length < 6) {
+    return res.status(400).send('Password must be at least 6 characters long');
+  }
+
+  try {
+    
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(400).send('Invalid email address');
+    }
+
+     const isTempPasswordValid = await bcrypt.compare(tempPassword, user.tempPassword);
+    if (!isTempPasswordValid || Date.now() > user.tempPasswordExpires) {
+      return res.status(400).send('Temporary password is invalid or expired');
+    }
+
+     const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    user.password = hashedPassword;
+    user.tempPassword = undefined; 
+    user.tempPasswordExpires = undefined; 
+
+    await user.save();
+
+    res.status(200).send('Password has been updated successfully');
+  } catch (error) {
+    console.error('Error in /set-password route:', error);
+    res.status(500).send('Server error, please try again later');
+  }
+});
+
+module.exports = app;
+
 app.get('/set-password', (req, res) => {
   res.render('set-password', { errorMessage: null });
 });
