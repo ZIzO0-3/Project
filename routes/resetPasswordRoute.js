@@ -7,15 +7,10 @@ const flash = require('connect-flash');
 const app = express();
 router.use(flash());
 const crypto = require('crypto');
-function generateToken() {
-  return crypto.randomBytes(32).toString('hex');
-}
 router.post('/set-password', async (req, res) => {
   const {  tempPassword, newPassword, verifyPassword } = req.body;
-const token = req.query.token; 
-    if (!token) {
-        return res.status(400).send('Token is required');
-    }
+const token = req.query.token;
+    console.log(token) 
   if (!newPassword || newPassword.length < 6) {
     req.flash('error', 'Password must be at least 6 characters long');
     return res.redirect(`/set-password?token=${encodeURIComponent(token)}`);
@@ -29,8 +24,7 @@ const token = req.query.token;
   try {
     const user = await User.findOne({
       resetToken: token,
-      resetTokenExpires: { $gt: Date.now() } // Check if token has expired
-    });
+          });
     if (!user) {
       req.flash('error', 'Invalid or expired token');
       return res.redirect('/reset-password');

@@ -115,11 +115,8 @@ app.post('/signup', async (req, res) => {
 });
 
 app.get('/reset-password', (req, res) => {
-  const token = req.query.token; 
-    if (!token) {
-        return res.status(400).send('Token is required');
-    }
-  res.render('reset-password', { token, errorMessage: null });
+  
+  res.render('reset-password', { errorMessage: null });
 });
 
 app.post('/reset-password', async (req, res) => {
@@ -130,12 +127,15 @@ app.post('/reset-password', async (req, res) => {
   }
 
   try {
-    const user = await User.findOne({ email, token });
+    const user = await User.findOne({ email});
 
     if (!user) {
       return res.status(400).send('No user found with that email address.');
     }
-
+const token = crypto.randomBytes(20).toString('hex');
+    user.resetToken = token;
+    user.resetTokenExpires = Date.now() + 3600000; // Token expires in 1 hour
+    await user.save();
     const tempPassword = crypto.randomBytes(4).toString('hex');
     const transporter = nodemailer.createTransport({
       service: 'gmail',
@@ -144,12 +144,12 @@ app.post('/reset-password', async (req, res) => {
         pass: "ukug efhf ivco auua",
       },
     });
-    
+    console.log(user.email)
     const mailOptions = {
   from: "eslammashorr@gmail.com",
   to: user.email,
   subject: "Password Reset Request",
-html: `
+  html: `
     <!doctype html>
     <html>
     <head>
@@ -173,7 +173,7 @@ html: `
             <p>It seems that you’ve forgotten your password. Don’t worry; we’re here to help.</p>
             <p>Please use the button below to reset your password. Your temporary password is:</p>
             <p><strong>${tempPassword}</strong></p>
-            <a href="https://feather-bald-hydrant.glitch.me/set-password?token=${user.resetToken}" class="button">Reset Password</a>" class="button">Reset Password</a>
+            <a href="https://feather-bald-hydrant.glitch.me/set-password?token=${token}" class="button">Reset Password</a>
             <p style="margin-top: 20px;">If you did not request a password reset, you can safely ignore this email.</p>
         </div>
         <div class="footer">
@@ -194,8 +194,7 @@ transporter.sendMail(mailOptions, (err, info) => {
       user.tempPassword = bcrypt.hashSync(tempPassword, 10); 
       user.tempPasswordExpires = Date.now() + 3600000; 
       user.save();
-
-      res.redirect(`/set-password?token=${encodeURIComponent(user.resetToken)}`);
+      res.redirect(`/set-password?token=${encodeURIComponent(token)}`);    
     });
   } catch (error) {
     console.error('Error in /reset-password route:', error);
