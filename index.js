@@ -7,7 +7,6 @@ const User = require('./models/User');
 dotenv.config();
 const app = express();
 const session = require('express-session');
-
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.set('view engine', 'ejs');
@@ -107,7 +106,9 @@ app.post('/signup', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
-
+app.get('/reset-password', (req, res) => {
+  res.render('reset-password', { errorMessage: null });
+});
 app.post('/reset-password', (req, res) => {
   const { email } = req.body;
   if (!email) {
