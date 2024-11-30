@@ -8,7 +8,6 @@ dotenv.config();
 
 const router = express.Router();
 
-// Register new user
 router.post('/views/signup.html', async (req, res) => {
   const { username, email, password } = req.body;
   
@@ -22,7 +21,6 @@ router.post('/views/signup.html', async (req, res) => {
   res.status(201).json({ message: 'User registered successfully' });
 });
 
-// Login user
 router.post('/login.html', async (req, res) => {
   const { email, password } = req.body;
 
@@ -39,7 +37,6 @@ router.post('/login.html', async (req, res) => {
   const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
     expiresIn: '1h',
   });
-
   res.json({ message: 'Login successful', token });
 });
 

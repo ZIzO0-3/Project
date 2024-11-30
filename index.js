@@ -10,10 +10,11 @@ const nodemailer = require('nodemailer');
 const session = require('express-session');
 const resetPasswordRoute = require('./routes/resetPasswordRoute');
 const flash = require('connect-flash'); // Add this line
-
 dotenv.config();
 
 const app = express();
+
+  app.use(flash());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.set('view engine', 'ejs');
@@ -25,7 +26,9 @@ app.use(session({
   saveUninitialized: true,  
   cookie: { secure: false }  
 }));
-app.use(flash())
+
+
+
 mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log('MongoDB connected'))
   .catch(err => console.log(err));
@@ -37,6 +40,11 @@ function isAuthenticated(req, res, next) {
     res.redirect('/login');  
   }
 }
+app.use((req, res, next) => {
+  res.locals.messages = req.flash('error'); 
+  res.locals.successMessages = req.flash('success'); 
+  next();
+});
 
 app.use('/api/auth', authRoutes);
 app.use('/reset-password', resetPasswordRoute);
@@ -50,37 +58,27 @@ app.get('/home', (req, res) => {
   const user = req.session.user || null; 
   res.render('index', { user });
 });
-app.use((req, res, next) => {
-  res.locals.messages = req.flash('error');
-  res.locals.successMessages = req.flash('success');
-  next();
-});
 
 app.get('/login', (req, res) => {
   const passwordUpdated = req.session.passwordUpdated || false; 
-  const errorMessage = req.flash('error'); 
+  const errorMessage = req.flash('error');
   req.session.passwordUpdated = false; 
   res.render('login', {
     passwordUpdated: passwordUpdated,
-    errorMessage: errorMessage.length > 0 ? errorMessage[0] : null 
+    errorMessage: errorMessage.length > 0 ? errorMessage[0] : null
   });
 });
 
 app.post('/login', async (req, res) => {
   const { email, password } = req.body;
-console.log(email) 
-  console.log(password) 
   try {
-    const user = await User.findOne({ email: email });
-console.log(user) 
+    const user = await User.findOne({ email });
     if (!user || user.password !== password) {
-      req.flash('error', 'Invalid email or password'); 
-      console.log("wrong") 
-      return res.redirect('/login'); 
-    }
-req.session.user = { id: user._id, email: user.email }; // Only store non-sensitive data
- 
-    res.redirect('/home'); 
+  req.flash('error', 'Invalid email or password');
+  return res.redirect('/login');
+}
+    req.session.user = { id: user._id, email: user.email };
+    res.redirect('/home');
   } catch (err) {
     console.error('Error during login:', err);
     res.status(500).json({ error: 'Internal Server Error' });
@@ -222,7 +220,7 @@ const token = req.query.token; // Getting the token from the query string
   if (!tempPassword) {
     return res.status(400).send('Temporary password is required');
   }
-
+  
   try {
     const user = await User.findOne({ resetToken: token });
 
@@ -239,7 +237,7 @@ const token = req.query.token; // Getting the token from the query string
 
     const hashedPassword = await bcrypt.hash(newPassword, 10);
 
-    user.password = hashedPassword;
+    user.password = newPassword;
     console.log(newPassword) 
     user.tempPassword = undefined; 
     user.tempPasswordExpires = undefined; 
