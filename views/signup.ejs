@@ -82,61 +82,63 @@
             </div>
         </div>
         <!-- Header End -->
- <!-- Signup Start -->
-<div class="container-xxl py-2 mt-4">
-    <div class="container">
-
-        <div class="row g-4 wow fadeInUp" data-wow-delay="0.5s ">
-
-            <center>
-                <form class="shadow p-4" style="max-width: 550px;" method="POST" action="/signup">
-                    <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
-                        <h1 class="mb-5 bg-white text-center px-3">Signup</h1>
-                    </div>
-                    <div class="row g-3">
-                        <div class="col-12">
-                            <div class="form-floating">
-                                <input type="text" class="form-control" id="username" name="username" placeholder="Username">
-                                <label for="username">Username</label>
-                            </div>
-                        </div>
-                        <div class="col-12">
-                            <div class="form-floating">
-                                <input type="text" class="form-control" id="studentId" name="studentId" placeholder="Student ID">
-                                <label for="studentId">Student ID</label>
-                            </div>
-                        </div>
-
-                        <div class="col-12">
-                            <div class="form-floating">
-                                <input type="email" class="form-control" id="email" name="email" placeholder="Email Address">
-                                <label for="email">Email Address</label>
-                            </div>
-                        </div>
-
-                        <div class="col-12">
-                            <div class="form-floating">
-                                <input type="password" class="form-control" id="password" name="password" placeholder="Password">
-                                <label for="password">Password</label>
-                            </div>
-                        </div>
-
-                        <div class="col-12">
-                            <button class="btn text-light w-100 py-3" type="submit">Signup</button>
-                        </div>
-
-                        <div class="col-12 text-center">
-                            <p>Already have an account? <a class="text-decoration-none" href="/login">Login</a></p>
-                        </div>
-                    </div>
-                </form>
-            </center>
-
+  <!-- Error message div -->
+        <div id="error-message" class="alert alert-danger" style="display:none;">
+            You have already registered your account before. <a href="/login">Click here</a> to login.
         </div>
-    </div>
-</div>
-<!-- Signup End -->
+<!-- Signup Start -->
+        <div class="container-xxl py-2 mt-4">
+            <div class="container">
+                <div class="row g-4 wow fadeInUp" data-wow-delay="0.5s ">
 
+                    <center>
+                        <form class="shadow p-4" style="max-width: 550px;" method="POST" action="/signup">
+                            <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
+                                <h1 class="mb-5 bg-white text-center px-3">Signup</h1>
+                            </div>
+                            <div class="row g-3">
+                                <div class="col-12">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control" id="username" name="username" placeholder="Username" required>
+                                        <label for="username">Username</label>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control" id="studentId" name="studentId" placeholder="Student ID" required>
+                                        <label for="studentId">Student ID</label>
+                                    </div>
+                                </div>
+
+                                <div class="col-12">
+                                    <div class="form-floating">
+                                        <input type="email" class="form-control" id="email" name="email" placeholder="Email Address" required>
+                                        <label for="email">Email Address</label>
+                                    </div>
+                                </div>
+
+                                <div class="col-12">
+                                    <div class="form-floating">
+                                        <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
+                                        <label for="password">Password</label>
+                                    </div>
+                                </div>
+
+                                <div class="col-12">
+                                    <button class="btn text-light w-100 py-3" type="submit">Signup</button>
+                                </div>
+
+                                <div class="col-12 text-center">
+                                    <p>Already have an account? <a class="text-decoration-none" href="/login">Login</a></p>
+                                </div>
+                            </div>
+                        </form>
+                    </center>
+
+                </div>
+            </div>
+        </div>
+        <!-- Signup End -->
 
 
     <!-- Footer Start -->
@@ -189,8 +191,14 @@
     <script src="lib/waypoints/waypoints.min.js"></script>
     <script src="lib/owlcarousel/owl.carousel.min.js"></script>
 
-    <!-- Template Javascript -->
+    
     <script src="js/main.js"></script>
+  <script>
+        // Show error message if it's present
+        if ('<%= errorMessage ? "true" : "false" %>' === 'true') {
+            document.getElementById('error-message').style.display = 'block';
+        }
+    </script>
 </body>
 
 </html>
