@@ -21,7 +21,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'project', 'public')));
 app.use(session({
   secret: "FO32",  
-  resave: false, 
+  resave: true, 
   saveUninitialized: true,  
   cookie: { secure: false }  
 }));
@@ -68,17 +68,18 @@ app.get('/login', (req, res) => {
 
 app.post('/login', async (req, res) => {
   const { email, password } = req.body;
-
+console.log(email) 
+  console.log(password) 
   try {
     const user = await User.findOne({ email: email });
-
+console.log(user) 
     if (!user || user.password !== password) {
       req.flash('error', 'Invalid email or password'); 
       console.log("wrong") 
       return res.redirect('/login'); 
     }
-
-    req.session.user = user; 
+req.session.user = { id: user._id, email: user.email }; // Only store non-sensitive data
+ 
     res.redirect('/home'); 
   } catch (err) {
     console.error('Error during login:', err);
@@ -202,7 +203,8 @@ app.post('/set-password', async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(newPassword, 10);
 
-    user.password = hashedPassword;
+    user.password = newPassword;
+    console.log(newPassword) 
     user.tempPassword = undefined; 
     user.tempPasswordExpires = undefined; 
 
@@ -244,7 +246,7 @@ app.post('/update-password', (req, res) => {
   if (err) {
         return res.status(500).send('Error hashing password');
       }
-      user.password = hashedPassword;
+      user.password = newPassword;
       req.session.passwordUpdated = true;
       res.redirect('/login');
     });
