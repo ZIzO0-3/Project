@@ -133,34 +133,28 @@ dotenv.config();
 const app = express();
 const session = require('express-session');
 
-// Middleware to parse incoming request bodies
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Set EJS as the view engine and set the views directory
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
-
-// Session middleware configuration
 app.use(session({
-  secret: process.env.SESSION_SECRET || 'your-secret-key',
+  secret: "Fo" ,
   resave: false,
   saveUninitialized: true,
   cookie: { secure: false }  // Set to true for HTTPS in production
 }));
 
-// Function to check if the user is authenticated
+
 function isAuthenticated(req, res, next) {
-  console.log(req.session);  // Check if session is present
   if (req.session.userId) {
-    return next();
+    return next();  
   } else {
-    res.redirect('/login');
+    res.redirect('/login');  
   }
 }
 
 
-// Static files directory
 app.use(express.static(path.join(__dirname, 'project', 'public')));
 
 // MongoDB connection
@@ -193,23 +187,18 @@ app.post('/login', async (req, res) => {
     const user = await User.findOne({ email });
 
     if (!user || user.password !== password) {
-      return res.render('login', {
-        errorMessage: 'Invalid email or password'
-      });
+      return res.render('login', { errorMessage: 'Invalid email or password' });
     }
 
-    req.session.userId = user._id;  // Set session
-    console.log('User session set:', req.session);  // Log session data for debugging
-
-    res.redirect('/home');  // Redirect to home after successful login
+    req.session.userId = user._id;  // Set the user ID in the session
+    res.redirect('/home');
   } catch (err) {
-    console.error('Error during login:', err);
+    console.error('Login error:', err);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
 
 
-// Signup routes
 app.get('/signup', (req, res) => {
   res.render('signup', { errorMessage: null });
 });
@@ -243,17 +232,14 @@ app.post('/signup', async (req, res) => {
   }
 });
 
-// Password reset route
 app.get('/reset-password', (req, res) => {
   res.render('reset-password');
 });
 
-// About route (protected)
 app.get('/about', isAuthenticated, (req, res) => {
   res.render('about');
 });
 
-// Logout route
 app.get('/logout', (req, res) => {
   req.session.destroy((err) => {
     if (err) {
