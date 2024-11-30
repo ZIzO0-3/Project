@@ -1,60 +1,127 @@
-const express = require('express');
+/*const express = require('express');
 const User = require('../models/User');
-const crypto = require('crypto'); // To generate a reset token
-const nodemailer = require('nodemailer'); // For sending the email
-
+const bcrypt = require('bcryptjs');
 const router = express.Router();
+const session = require('express-session');
+const flash = require('connect-flash');
+const app = express();
+router.use(flash());
+const crypto = require('crypto');
+router.post('/set-password', async (req, res) => {
+  const { tempPassword, newPassword, verifyPassword } = req.body;
+  const token = req.query.token;  // Ensure you get the token from the query parameter
 
-router.post('/reset-password', async (req, res) => {
-  const { email } = req.body;
+  console.log("Token from URL:", token);  // Debugging: Check if token is being received
+
+  if (!token) {
+    req.flash('error', 'Invalid or expired token');
+    return res.redirect('/reset-password');  // Redirect if token is missing
+  }
+
+  if (!newPassword || newPassword.length < 6) {
+    req.flash('error', 'Password must be at least 6 characters long');
+    return res.redirect(`/set-password?token=${encodeURIComponent(token)}`);
+  }
+
+  if (newPassword !== verifyPassword) {
+    req.flash('error', 'Passwords do not match');
+    return res.redirect(`/set-password?token=${encodeURIComponent(token)}`);
+  }
 
   try {
-    // Check if the email exists in the database
-    const user = await User.findOne({ email });
-
+    const user = await User.findOne({ resetToken: token });
+    
     if (!user) {
-      return res.status(400).json({ error: 'No user found with that email address.' });
+      req.flash('error', 'Invalid or expired token');
+      return res.redirect('/reset-password');
     }
 
-    // Generate a reset token and set its expiry time
-    const resetToken = crypto.randomBytes(20).toString('hex');
+    const isTempPasswordValid = await bcrypt.compare(tempPassword, user.tempPassword);
 
-    user.resetPasswordToken = resetToken;
-    user.resetPasswordExpires = Date.now() + 3600000; // Token valid for 1 hour
+    if (!isTempPasswordValid) {
+      req.flash('error', 'Temporary password is invalid');
+      return res.redirect(`/set-password?token=${encodeURIComponent(token)}`);
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    user.password = hashedPassword;  
+    user.tempPassword = undefined;   
+    user.tempPasswordExpires = undefined;
+    user.resetToken = undefined;     
+    user.resetTokenExpires = undefined;
+
     await user.save();
 
-    // Configure the email transport
-    const transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        user: process.env.EMAIL_USER, // Your email address
-        pass: process.env.EMAIL_PASS, // Your email password or app password
-      },
-    });
-
-    
-    const mailOptions = {
-      from: process.env.EMAIL_USER,
-      to: user.email,
-      subject: 'Password Reset Request',
-      text: `You requested a password reset. Please use the following link to reset your password: \n\n` +
-        `https://feather-bald-hydrant.glitch.me/reset-password/${resetToken} \n\n` +
-        `This link will expire in 1 hour. If you did not request this, please ignore this email.`,
-    };
-
-    
-    transporter.sendMail(mailOptions, (err, info) => {
-      if (err) {
-        console.error('Error sending email:', err);
-        return res.status(500).json({ error: 'Failed to send email.' });
-      }
-      res.status(200).json({ message: 'Reset link has been sent to your email!' });
-    });
+    req.flash('success', 'Password updated successfully');
+    res.redirect('/login');
   } catch (error) {
-    console.error('Error in /reset-password route:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    console.error('Error resetting password:', error);
+    req.flash('error', 'Server error, please try again later');
+    res.redirect(`/set-password?token=${encodeURIComponent(token)}`);
   }
 });
 
-module.exports = router;
+module.exports = router;*/
+const express = require('express');
+const User = require('../models/User');
+const bcrypt = require('bcryptjs');
+const router = express.Router();
+const flash = require('connect-flash');
+const crypto = require('crypto');
 
+router.use(flash());
+
+router.post('/set-password', async (req, res) => {
+    const { tempPassword, newPassword, verifyPassword } = req.body;
+    const token = req.quicke.token
+    console.log("Token from URL:", token);  
+
+    if (!token) {
+        req.flash('error', 'Invalid or expired token');
+        return res.redirect('/reset-password');   
+    }
+
+    if (!newPassword || newPassword.length < 6) {
+        req.flash('error', 'Password must be at least 6 characters long');
+        return res.redirect(`/set-password?token=${encodeURIComponent(token)}`);
+    }
+
+    if (newPassword !== verifyPassword) {
+        req.flash('error', 'Passwords do not match');
+        return res.redirect(`/set-password?token=${encodeURIComponent(token)}`);
+    }
+
+    try {
+        const user = await User.findOne({ resetToken: token });
+
+        if (!user) {
+            req.flash('error', 'Invalid or expired token');
+            return res.redirect('/reset-password');
+        }
+
+        const isTempPasswordValid = await bcrypt.compare(tempPassword, user.tempPassword);
+
+        if (!isTempPasswordValid) {
+            req.flash('error', 'Temporary password is invalid');
+            return res.redirect(`/set-password?token=${encodeURIComponent(token)}`);
+        }
+    
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+        user.password = newPassword;  
+        user.tempPassword = undefined;   
+        user.tempPasswordExpires = undefined;
+        user.resetToken = undefined;     
+        user.resetTokenExpires = undefined;
+
+        await user.save();
+
+        req.flash('success', 'Password updated successfully');
+        res.redirect('/login');
+    } catch (error) {
+        console.error('Error resetting password:', error);
+        req.flash('error', 'Server error, please try again later');
+        res.redirect(`/set-password?token=${encodeURIComponent(token)}`);
+    }
+});
+
+module.exports = router;
