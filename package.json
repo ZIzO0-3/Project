@@ -1,0 +1,37 @@
+{
+  "name": "System Bot",
+  "version": "0.1.0",
+  "description": "A simple Node app built on fastify, instantly up and running. Built to be remixed on Glitch.com.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.1",
+    "glob": "^8.0.3",
+    "i": "^0.3.7",
+    "install": "^0.13.0",
+    "jsonwebtoken": "^9.0.2",
+    "moment": "^2.29.4",
+    "mongoose": "^6.13.5",
+    "node-cron": "^3.0.3",
+    "nodemailer": "^6.9.16",
+    "npm": "^10.9.1",
+    "path": "^0.12.7",
+    "pro.db": "^3.0.8",
+    "util": "^0.12.5"
+  },
+  "engines": {
+    "node": "16.x"
+  },
+  "repository": {
+    "url": "https://glitch.com/edit/#!/glitch-hello-node"
+  },
+  "license": "MIT",
+  "keywords": [
+    "node",
+    "glitch"
+  ]
+}

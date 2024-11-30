@@ -13,8 +13,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
     <link href="lib/animate/animate.min.css" rel="stylesheet">
     <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
-    <link href="css/bootstrap.min.css" rel="stylesheet">
-    <link href="css/style.css" rel="stylesheet">
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/style.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 </head>
@@ -42,24 +42,22 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarCollapse">
             <div class="navbar-nav ms-auto p-4 p-lg-0">
-                <a href="index.html" class="nav-item nav-link active">Home</a>
-                <a href="about.html" class="nav-item nav-link">About</a>
+                <a href="/home" class="nav-item nav-link active">Home</a>
+                <a href="/about" class="nav-item nav-link">About</a>
                 <div class="nav-item dropdown">
                     <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
                     <div class="dropdown-menu fade-down m-0">
-                        <a href="team.html" class="dropdown-item">Our Team</a>
-                        <a href="testimonial.html" class="dropdown-item">Testimonial</a>
-                        <a href="vieos.html" class="dropdown-item">Videos</a>
-                        <a href="news.html" class="dropdown-item">News</a>
-                        <a href="teachers.html" class="dropdown-item">Teacher Data</a>
-                        <a href="schededule.html" class="dropdown-item">Chapter Schedule</a>
-                        <a href="curricula.html" class="dropdown-item">Curricula</a>  
-                        <a href="endance.html" class="dropdown-item">Attendance</a>
-                        <a href="erences.html" class="dropdown-item">Books & Referenceand</a>
+                        <a href="/vieos" class="dropdown-item">Videos</a>
+                        <a href="/news" class="dropdown-item">News</a>
+                        <a href="/teachers" class="dropdown-item">Teacher Data</a>
+                        <a href="/schededule" class="dropdown-item">Chapter Schedule</a>
+                        <a href="/curricula" class="dropdown-item">Curricula</a>  
+                        <a href="/attendance" class="dropdown-item">Attendance</a>
+                        <a href="/books" class="dropdown-item">Books & Referenceand</a>
                     </div>
                 </div>
-                <a href="contact.html" class="nav-item nav-link">Contact</a>
-                <a href="login.html" class="nav-item nav-link"><i class="fa fa-user"></i></a>
+                <a href="/contact" class="nav-item nav-link">Contact</a>
+                <a href="/login" class="nav-item nav-link"><i class="fa fa-user"></i></a>
                 <a href="#" class="nav-item nav-link">
                 <div id="google_translate_element"> </div>
                   </a>
@@ -76,7 +74,7 @@
                         <h1 class="display-3 text-white animated slideInDown">Login</h1>
                         <nav aria-label="breadcrumb">
                             <ol class="breadcrumb justify-content-center">
-                                <li class="breadcrumb-item"><a class="text-white" href="index.html">Home</a></li>
+                                <li class="breadcrumb-item"><a class="text-white" href="home">Home</a></li>
                                 <li class="breadcrumb-item text-white active" aria-current="page">Login</li>
                             </ol>
                         </nav>
@@ -88,7 +86,7 @@
     
 
 
-    <!-- Login Start -->
+    <!-- Login Start 
     <div class="container-xxl py-2 mt-4">
         <div class="container">
           
@@ -133,6 +131,48 @@
         </div>
     </div>
     <!-- Login End -->
+<!-- Login Start -->
+<div class="container-xxl py-2 mt-4">
+    <div class="container">
+        <div class="row g-4 wow fadeInUp" data-wow-delay="0.5s">
+            <center>
+                <form class="shadow p-4" style="max-width: 550px;" action="/login" method="POST">
+                    <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
+                        <h1 class="mb-5 bg-white text-center px-3">Login</h1>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <div class="form-floating">
+                                <input type="email" class="form-control" id="email" name="email" placeholder="Email Address" required>
+                                <label for="email">Email Address</label>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-floating">
+                                <input type="password" class="form-control" id="password" name="password" placeholder="Password" required minlength="6">
+                                <label for="password">Password</label>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <p><a href="/reset-password">Forgot password?</a></p>
+                        </div>
+                       
+                    </div>
+                        <div class="col-12">
+                            <button class="btn text-light w-100 py-3" type="submit">Login</button>
+                        </div>
+
+                        <div class="col-12 text-center">
+                            <p>Don't have an account? <a class="text-decoration-none" href="/signup">Signup</a></p>
+                        </div>
+                    </div>
+                </form>
+            </center>     
+        </div>
+    </div>
+</div>
+<!-- Login End -->
 
 
 <!-- Footer Start -->
@@ -186,7 +226,7 @@
     <script src="lib/owlcarousel/owl.carousel.min.js"></script>
 
     <!-- Template Javascript -->
-    <script src="js/main.js"></script>
+    <script src="/js/main.js"></script>
 </body>
 
 </html>

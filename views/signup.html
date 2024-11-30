@@ -42,25 +42,22 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarCollapse">
             <div class="navbar-nav ms-auto p-4 p-lg-0">
-                <a href="index.html" class="nav-item nav-link active">Home</a>
-                <a href="about.html" class="nav-item nav-link">About</a>
-                      <div class="nav-item dropdown">
+                <a href="/home" class="nav-item nav-link active">Home</a>
+                <a href="/about" class="nav-item nav-link">About</a>
+                <div class="nav-item dropdown">
                     <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
                     <div class="dropdown-menu fade-down m-0">
-                        <a href="team.html" class="dropdown-item">Our Team</a>
-                        <a href="testimonial.html" class="dropdown-item">Testimonial</a>
-                        <a href="vieos.html" class="dropdown-item">Videos</a>
-                        <a href="news.html" class="dropdown-item">News</a>
-                        <a href="teachers.html" class="dropdown-item">Teacher Data</a>
-                        <a href="schededule.html" class="dropdown-item">Chapter Schedule</a>
-                        <a href="curricula.html" class="dropdown-item">Curricula</a>  
-                        <a href="endance.html" class="dropdown-item">Attendance</a>
-                        <a href="erences.html" class="dropdown-item">Books & Referenceand</a>
-
+                        <a href="/vieos" class="dropdown-item">Videos</a>
+                        <a href="/news" class="dropdown-item">News</a>
+                        <a href="/teachers" class="dropdown-item">Teacher Data</a>
+                        <a href="/schededule" class="dropdown-item">Chapter Schedule</a>
+                        <a href="/curricula" class="dropdown-item">Curricula</a>  
+                        <a href="/attendance" class="dropdown-item">Attendance</a>
+                        <a href="/books" class="dropdown-item">Books & Referenceand</a>
                     </div>
                 </div>
-                <a href="contact.html" class="nav-item nav-link">Contact</a>
-                <a href="login.html" class="nav-item nav-link"><i class="fa fa-user"></i></a>
+                <a href="/contact" class="nav-item nav-link">Contact</a>
+                <a href="/login" class="nav-item nav-link"><i class="fa fa-user"></i></a>
                 <a href="#" class="nav-item nav-link">
                 <div id="google_translate_element"> </div>
                   </a>
@@ -76,7 +73,7 @@
                         <h1 class="display-3 text-white animated slideInDown">Signup</h1>
                         <nav aria-label="breadcrumb">
                             <ol class="breadcrumb justify-content-center">
-                                <li class="breadcrumb-item"><a class="text-white" href="index.html">Home</a></li>
+                                <li class="breadcrumb-item"><a class="text-white" href="/home">Home</a></li>
                                 <li class="breadcrumb-item text-white active" aria-current="page">Signup</li>
                             </ol>
                         </nav>
@@ -85,63 +82,61 @@
             </div>
         </div>
         <!-- Header End -->
-    
+ <!-- Signup Start -->
+<div class="container-xxl py-2 mt-4">
+    <div class="container">
 
+        <div class="row g-4 wow fadeInUp" data-wow-delay="0.5s ">
 
-    <!-- Signup Start -->
-    <div class="container-xxl py-2 mt-4">
-        <div class="container">
-
-            <div class="row g-4 wow fadeInUp" data-wow-delay="0.5s ">
-
-                <center>
-                    <form class="shadow p-4" style="max-width: 550px;">
-                        <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
-                            <h1 class="mb-5 bg-white text-center px-3">Signup</h1>
-
-                        </div>
-                        <div class="row g-3">
-                            <div class="col-12">
-                                <div class="form-floating">
-                                    <input type="text" class="form-control" id="Username" placeholder="Username">
-                                    <label for="Username">Username</label>
-                                </div>
-                            </div>
-                          <div class="col-12">
-                                <div class="form-floating">
-                                    <input type="text" class="form-control" id="Student Id" placeholder="Student ID">
-                                    <label for="Student ID">Student Id</label>
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <div class="form-floating">
-                                    <input type="email" class="form-control" id="Email" placeholder="Email Address">
-                                    <label for="email">Email Address</label>
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <div class="form-floating">
-                                    <input type="password" class="form-control" id="Password" placeholder="Password">
-                                    <label for="password">Password</label>
-                                </div>
-                            </div>
-
-                            <div class="col-12">
-                                <button class="btn text-light w-100 py-3" type="submit">Signup</button>
-                            </div>
-
-                            <div class="col-12 text-center">
-                                <p>Already have an account? <a class="text-decoration-none" href="login.html">Login</a>
-                                </p>
+            <center>
+                <form class="shadow p-4" style="max-width: 550px;" method="POST" action="/signup">
+                    <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
+                        <h1 class="mb-5 bg-white text-center px-3">Signup</h1>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="username" name="username" placeholder="Username">
+                                <label for="username">Username</label>
                             </div>
                         </div>
-                    </form>
-                </center>
+                        <div class="col-12">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="studentId" name="studentId" placeholder="Student ID">
+                                <label for="studentId">Student ID</label>
+                            </div>
+                        </div>
 
-            </div>
+                        <div class="col-12">
+                            <div class="form-floating">
+                                <input type="email" class="form-control" id="email" name="email" placeholder="Email Address">
+                                <label for="email">Email Address</label>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="form-floating">
+                                <input type="password" class="form-control" id="password" name="password" placeholder="Password">
+                                <label for="password">Password</label>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <button class="btn text-light w-100 py-3" type="submit">Signup</button>
+                        </div>
+
+                        <div class="col-12 text-center">
+                            <p>Already have an account? <a class="text-decoration-none" href="/login">Login</a></p>
+                        </div>
+                    </div>
+                </form>
+            </center>
+
         </div>
     </div>
-    <!-- Signup End -->
+</div>
+<!-- Signup End -->
+
 
 
     <!-- Footer Start -->
