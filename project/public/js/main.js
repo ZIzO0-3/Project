@@ -158,5 +158,51 @@
         }
 
     });
+    
+// public/js/reset-password.js
+document.getElementById('resetPasswordForm').addEvent {stener('submit', async (e) => {
+  e.preventDefault(); // Prevent form from submitting the traditional way
+
+  const email = document.getElementById('email').value;
+  const errorMessage = document.getElementById('errorMessage');
+  const successMessage = document.getElementById('successMessage');
+
+  // Hide any previous messages
+  errorMessage.style.display = 'none';
+  successMessage.style.display = 'none';
+
+  // Basic validation (optional)
+  if (!email) {
+    errorMessage.style.display = 'block';
+    errorMessage.innerHTML = 'Please enter your email address.';
+    return;
+  }
+
+  try {
+    const response = await fetch('/api/auth/reset-password', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email }),
+    });
+
+    const data = await response.json();
+
+    if (response.status === 200) {
+      // Success: Show success message
+      successMessage.style.display = 'block';
+    } else {
+      // Show error message if email not found
+      errorMessage.style.display = 'block';
+      errorMessage.innerHTML = data.error || 'Something went wrong. Please try again.';
+    }
+  } catch (error) {
+    // Handle errors during the fetch request
+    console.error('Error during reset password request:', error);
+    errorMessage.style.display = 'block';
+    errorMessage.innerHTML = 'An error occurred. Please try again later.';
+  }
+});
 
 })(jQuery);
