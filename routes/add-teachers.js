@@ -1,74 +1,72 @@
 const express = require('express');
-const isAuthenticated = require('../middleware/isAuthenticated'); 
-const isAdmin = require('../middleware/isAuthenticated'); 
+const multer = require('multer');
+const isAuthenticated = require('../middleware/isAdmin'); 
+const isAdmin = require('../middleware/isAdmin'); 
 const Teacher = require('../models/Teacher');
+const path = require('path');
 
 const router = express.Router();
 
-// Render add-teachers page (GET request)
+// Set up multer for file upload
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'uploads/'); // Save file in 'uploads/' folder
+    },
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + path.extname(file.originalname)); // Create a unique filename
+    }
+});
+
+const upload = multer({ storage: storage });
+
 router.get('/add-teachers', isAuthenticated, isAdmin, (req, res) => {
-  res.render('add-teachers'); // Render the add-teachers.ejs view
+  const successMessage = req.query.success ? "Teacher added successfully!" : null;
+  const errorMessage = req.query.error ? "There was an error adding the teacher." : null;
+  res.render('add-teachers', {
+    successMessage: successMessage, 
+    errorMessage: errorMessage
+  });
 });
 
-// Handle adding a teacher (POST request)
-router.post('/add-teachers', isAuthenticated, isAdmin, async (req, res) => {
-  try {
-    const { name, email, phone, grade } = req.body;
-
-    // Ensure required fields are provided
-    if (!name || !email || !phone || !grade) {
-      return res.status(400).send('All fields are required');
-    }
-
-    // Create and save the new teacher
-    const newTeacher = new Teacher({ name, email, phone, grade });
-    await newTeacher.save();
-
-    res.redirect('/teachers'); // Redirect to the teachers list page
-  } catch (error) {
-    console.error('Error adding teacher:', error);
-    res.status(500).send('Internal Server Error');
-  }
-});
-
-module.exports = router;
-/*const express = require('express');
-const router = express.Router();
-const isAdmin = require('./routes/isAdmins'); // Middleware to check admin role
-const Teacher = require('./models/Teacher'); // Teacher model
-
-// Ensure you have middleware for parsing form data
-const bodyParser = require('body-parser');
-router.use(bodyParser.urlencoded({ extended: true }));
-
-// POST route to handle form submission
-router.post('/add-teachers', isAdmin, async (req, res) => {
+router.post('/add-teachers', isAuthenticated, isAdmin, upload.single('photo'), async (req, res) => {
+    console.log('POST /add-teachers triggered');
+    
     try {
-        const { name, subject, grade, photo, number } = req.body;
+        const { name, subject, grade, teacherNumber, work } = req.body;
+        const photo = req.file ? req.file.filename : null; // Handle photo upload
 
-            const grades = grade === 'both' ? ['1st Secondary', '2nd Secondary'] : [grade];
+        const teacherNumberParsed = Number(teacherNumber);
 
-           const teacher = new Teacher({
-      name,
-      subject,
-      grade,
-      photo, 
-      number
+        console.log('Request Body:', req.body); // Log the incoming data for debugging
+        console.log('Uploaded Photo:', photo); // Log uploaded photo filename
+        console.log('Parsed teacherNumber:', teacherNumberParsed); // Log parsed teacherNumber
+
+        if (!subject || !teacherNumberParsed || !photo) {
+            console.log('Missing required fields.');
+            return res.redirect('/add-teachers?error=true'); // Ensure all fields are provided
+        }
+
+        const grades = grade === 'both' ? ['1st Secondary', '2nd Secondary'] : [grade];
+
+        const newTeacher = new Teacher({
+            name,
+            subject,
+            grade: grades,
+            number: teacherNumber, // Use the parsed number
+            work,
+            photo
         });
-        await teacher.save();
 
-        res.redirect('/add-teachers?successMessage=true');
+        await newTeacher.save();
+        console.log('Teacher added successfully');
+        res.redirect('/add-teachers?success=true'); // Redirect to success page
+
     } catch (error) {
-        console.error('Error adding teacher:', error);
-        res.redirect('/add-teachers?errorMessage=true');
+        console.error('Error adding teacher:', error); // Log full error object
+        res.redirect('/add-teachers?error=true'); // Redirect to error page
     }
 });
 
-module.exports = router;
 
-    res.status(500).json({ message: 'Error adding teacher' });
-  }
-});
 
-module.exports = router;
-*/
+module.exports = router

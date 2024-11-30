@@ -9,13 +9,12 @@ const crypto = require('crypto');
 const nodemailer = require('nodemailer');
 const session = require('express-session');
 const resetPasswordRoute = require('./routes/resetPasswordRoute');
-const flash = require('connect-flash'); // Add this line
+const flash = require('connect-flash'); 
 dotenv.config();
-const isAdmin = require('./routes/isAdmins'); // Import the isAdmin middleware
+const isAdmin = require('./middleware/isAdmin'); 
 const Teacher = require('./models/Teacher'); // Teacher model
 const teacherRoutes = require('./routes/teachers'); // Assuming the route is in routes/teachers.js
 const addTeachersRoutes = require('./routes/add-teachers');
-
 const app = express();
 
 app.use(flash());
@@ -26,10 +25,10 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'project', 'public')));
 app.use(session({
   secret: "FO32",  
-  resave: true, 
+  resave: false, 
   saveUninitialized: true,  
   cookie: {
-    secure: false, // Use true if using HTTPS
+    secure: false , 
     maxAge: 1000 * 60 * 60 * 24 // 1 day
   }
 }));
@@ -53,7 +52,8 @@ app.use((req, res, next) => {
   res.locals.successMessages = req.flash('success'); 
   next();
 });
-//app.use('/', addTeachersRoutes);
+app.use('/', addTeachersRoutes);
+app.use('/', teacherRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/reset-password', resetPasswordRoute);
 
@@ -324,9 +324,8 @@ app.post('/update-password', (req, res) => {
     res.status(404).send('User not found');
   }
 });
-app.use('/', teacherRoutes);
 
-const PORT = process.env.PORT || 5000;
+const PORT = 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });

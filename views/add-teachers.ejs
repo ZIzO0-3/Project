@@ -78,13 +78,13 @@
 
     <!-- Add Teacher Form Start -->
     <div class="container-xxl py-2 mt-4">
-        <div class="container">
-            <div class="row g-4 wow fadeInUp" data-wow-delay="0.5s">
-                <center>
-                    <form class="shadow p-4" style="max-width: 550px;" action="/add-teachers" method="POST">
-                        <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
-                            <h1 class="mb-5 bg-white text-center px-3">Add Teacher</h1>
-                        </div>
+    <div class="container">
+        <div class="row g-4 wow fadeInUp" data-wow-delay="0.5s">
+            <center>
+                <form class="shadow p-4" style="max-width: 550px;" action="/add-teachers" method="POST" enctype="multipart/form-data">
+                    <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
+                        <h1 class="mb-5 bg-white text-center px-3">Add Teacher</h1>
+                    </div>
 
                         <% if (successMessage) { %>
                         <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -126,14 +126,14 @@
         <label for="grade">Grade</label>
     </div>
 </div>
-                            <!-- Teacher Number Input -->
+                            
+<!-- Teacher Number Input -->
                             <div class="col-12">
                                 <div class="form-floating">
-                                    <input type="text" class="form-control" id="teacherNumber" name="teacherNumber" placeholder="Teacher Number" required>
+                      <input type="number" name="teacherNumber" placeholder="Teacher Number" required /> 
                                     <label for="teacherNumber">Teacher Number</label>
                                 </div>
                             </div>
-
                             <div class="col-12">
                                 <div class="form-floating">
                                     <input type="file" class="form-control" id="photo" name="photo" required>
