@@ -117,10 +117,13 @@ app.post('/reset-password', (req, res) => {
   }
  
   
-   console.log(`Reset password link sent to ${email}`);
-  res.send('Reset password link has been sent to your email.');
+   console.log(`Reset password link sent to ${email}`);  
+    res.redirect('/set-password');
+ // res.send('Reset password link has been sent to your email.');
 });
-
+app.get('/set-password', (req, res) => {
+  res.render('set-password', { errorMessage: null });
+});
 
 app.get('/about',isAuthenticated, (req, res) => {
   if(!isAuthenticated) {
@@ -144,7 +147,6 @@ app.post('/logout', (req, res) => {
     res.redirect('/login'); 
   });
 });
-
 
 
 const PORT = process.env.PORT || 5000;
