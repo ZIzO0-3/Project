@@ -49,18 +49,17 @@ const session = require('express-session');
 const flash = require('connect-flash');
 const app = express();
 router.use(flash());
-
 router.post('/set-password', async (req, res) => {
   const { tempPassword, newPassword, verifyPassword, email } = req.body;
 
   if (!newPassword || newPassword.length < 6) {
     req.flash('error', 'Password must be at least 6 characters long');
-    return res.redirect('/set-password');  // Redirect back to the page with error
+    return res.redirect('/set-password?email=' + encodeURIComponent(email));  // Redirect back to the page with error
   }
 
   if (newPassword !== verifyPassword) {
     req.flash('error', 'New password and confirm password do not match');
-    return res.redirect('/set-password');  // Redirect back to the page with error
+    return res.redirect('/set-password?email=' + encodeURIComponent(email));  // Redirect back to the page with error
   }
 
   try {
@@ -68,19 +67,19 @@ router.post('/set-password', async (req, res) => {
 
     if (!user) {
       req.flash('error', 'Invalid email address');
-      return res.redirect('/set-password');  // Redirect back to the page with error
+      return res.redirect('/set-password?email=' + encodeURIComponent(email));  // Redirect back to the page with error
     }
 
     if (!user.tempPassword) {
       req.flash('error', 'No temporary password found');
-      return res.redirect('/set-password');  // Redirect back to the page with error
+      return res.redirect('/set-password?email=' + encodeURIComponent(email));  // Redirect back to the page with error
     }
 
     const isTempPasswordValid = await bcrypt.compare(tempPassword, user.tempPassword);
 
     if (!isTempPasswordValid || Date.now() > user.tempPasswordExpires) {
       req.flash('error', 'Temporary password is invalid or expired');
-      return res.redirect('/set-password');  // Redirect back to the page with error
+      return res.redirect('/set-password?email=' + encodeURIComponent(email));  // Redirect back to the page with error
     }
 
     const hashedPassword = await bcrypt.hash(newPassword, 10);
@@ -96,7 +95,7 @@ router.post('/set-password', async (req, res) => {
   } catch (error) {
     console.error('Error in /set-password route:', error);
     req.flash('error', 'Server error, please try again later');
-    res.redirect('/set-password');  // Redirect back to the page with error
+    res.redirect('/set-password?email=' + encodeURIComponent(email));  // Redirect back to the page with error
   }
 });
 

@@ -55,6 +55,7 @@ app.use((req, res, next) => {
   res.locals.successMessages = req.flash('success');
   next();
 });
+
 app.get('/login', (req, res) => {
   const passwordUpdated = req.session.passwordUpdated || false; 
   const errorMessage = req.flash('error'); 
@@ -73,6 +74,7 @@ app.post('/login', async (req, res) => {
 
     if (!user || user.password !== password) {
       req.flash('error', 'Invalid email or password'); 
+      console.log("wrong") 
       return res.redirect('/login'); 
     }
 
