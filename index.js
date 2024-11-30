@@ -24,6 +24,7 @@ function isAuthenticated(req, res, next) {
     res.redirect('/login');  
   }
 }
+
 app.use(express.static(path.join(__dirname, 'project', 'public')));
 app.use(express.json());
 mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
@@ -114,7 +115,8 @@ app.post('/reset-password', (req, res) => {
   if (!email) {
     return res.status(400).send('Email is required.');
   }
-
+ 
+  
    console.log(`Reset password link sent to ${email}`);
   res.send('Reset password link has been sent to your email.');
 });
@@ -149,5 +151,4 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
-
 
