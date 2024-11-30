@@ -115,18 +115,22 @@ app.post('/signup', async (req, res) => {
 });
 
 app.get('/reset-password', (req, res) => {
-  res.render('reset-password', { errorMessage: null });
+  const token = req.query.token; 
+    if (!token) {
+        return res.status(400).send('Token is required');
+    }
+  res.render('reset-password', { token, errorMessage: null });
 });
 
 app.post('/reset-password', async (req, res) => {
-  const { email } = req.body;
+  const { email,token } = req.body;
 
   if (!email) {
     return res.status(400).send('Email is required.');
   }
 
   try {
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email, token });
 
     if (!user) {
       return res.status(400).send('No user found with that email address.');
@@ -140,7 +144,7 @@ app.post('/reset-password', async (req, res) => {
         pass: "ukug efhf ivco auua",
       },
     });
-
+    
     const mailOptions = {
   from: "eslammashorr@gmail.com",
   to: user.email,
@@ -162,23 +166,22 @@ html: `
     </head>
     <body>
         <div class="container">
-            <div class="header">
-                <h1>Password Reset Request</h1>
-            </div>
-            <div class="content">
-                <p>It seems that you’ve forgotten your password.</p>
-                <p>Please use the button below to reset your password. Your temporary password is:</p>
-                <p><strong>${tempPassword}</strong></p>
-                <a href="https://example.com/reset-password" class="button">Reset Password</a>
-                <p style="margin-top: 20px;">If you did not request a password reset, you can ignore this email.</p>
-            </div>
-            <div class="footer">
-                <p>Some Firm Ltd, 35 Avenue, City 10115, USA</p>
-                <p><a href="#">Unsubscribe</a> from our emails</p>
-            </div>
+        <div class="header">
+            <h1>Password Reset Request</h1>
         </div>
-    </body>
-    </html>
+        <div class="content">
+            <p>It seems that you’ve forgotten your password. Don’t worry; we’re here to help.</p>
+            <p>Please use the button below to reset your password. Your temporary password is:</p>
+            <p><strong>${tempPassword}</strong></p>
+            <a href="https://feather-bald-hydrant.glitch.me/set-password?token=${user.token}" class="button">Reset Password</a>
+            <p style="margin-top: 20px;">If you did not request a password reset, you can safely ignore this email.</p>
+        </div>
+        <div class="footer">
+            <p>Eslam Mashhor Language School</p>
+        </div>
+    </div>
+</body>
+</html>
   `,
 };
 

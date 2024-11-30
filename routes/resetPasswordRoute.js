@@ -6,54 +6,58 @@ const session = require('express-session');
 const flash = require('connect-flash');
 const app = express();
 router.use(flash());
+const crypto = require('crypto');
+function generateToken() {
+  return crypto.randomBytes(32).toString('hex');
+}
 router.post('/set-password', async (req, res) => {
-  const { tempPassword, newPassword, verifyPassword, email } = req.body;
-
+  const {  tempPassword, newPassword, verifyPassword } = req.body;
+const token = req.query.token; 
+    if (!token) {
+        return res.status(400).send('Token is required');
+    }
   if (!newPassword || newPassword.length < 6) {
     req.flash('error', 'Password must be at least 6 characters long');
-    return res.redirect('/set-password?email=' + encodeURIComponent(email));  // Redirect back to the page with error
+    return res.redirect(`/set-password?token=${encodeURIComponent(token)}`);
   }
 
   if (newPassword !== verifyPassword) {
-    req.flash('error', 'New password and confirm password do not match');
-    return res.redirect('/set-password?email=' + encodeURIComponent(email));  // Redirect back to the page with error
+    req.flash('error', 'Passwords do not match');
+    return res.redirect(`/set-password?token=${encodeURIComponent(token)}`);
   }
 
   try {
-    const user = await User.findOne({ email });
-
+    const user = await User.findOne({
+      resetToken: token,
+      resetTokenExpires: { $gt: Date.now() } // Check if token has expired
+    });
     if (!user) {
-      req.flash('error', 'Invalid email address');
-      return res.redirect('/set-password?email=' + encodeURIComponent(email));  // Redirect back to the page with error
-    }
-
-    if (!user.tempPassword) {
-      req.flash('error', 'No temporary password found');
-      return res.redirect('/set-password?email=' + encodeURIComponent(email));  // Redirect back to the page with error
-    }
+      req.flash('error', 'Invalid or expired token');
+      return res.redirect('/reset-password');
+    }    
 
     const isTempPasswordValid = await bcrypt.compare(tempPassword, user.tempPassword);
 
-    if (!isTempPasswordValid || Date.now() > user.tempPasswordExpires) {
-      req.flash('error', 'Temporary password is invalid or expired');
-      return res.redirect('/set-password?email=' + encodeURIComponent(email));  // Redirect back to the page with error
+    if (!isTempPasswordValid) {
+      req.flash('error', 'Temporary password is invalid');
+      return res.redirect(`/set-password?token=${encodeURIComponent(token)}`);
     }
-
     const hashedPassword = await bcrypt.hash(newPassword, 10);
 
-    user.password = (newPassword) 
-    console.log("file"+ newPassword);
+    user.password = newPassword;
     user.tempPassword = undefined;
     user.tempPasswordExpires = undefined;
+    user.resetToken = undefined;
+    user.resetTokenExpires = undefined;
 
     await user.save();
 
-    req.flash('success', 'Password has been updated successfully');
-    res.redirect('/login');  // Redirect to login after successful password update
+    req.flash('success', 'Password updated successfully');
+    res.redirect('/login');
   } catch (error) {
-    console.error('Error in /set-password route:', error);
+    console.error('Error resetting password:', error);
     req.flash('error', 'Server error, please try again later');
-    res.redirect('/set-password?email=' + encodeURIComponent(email));  // Redirect back to the page with error
+    res.redirect(`/set-password?token=${encodeURIComponent(token)}`);
   }
 });
 
