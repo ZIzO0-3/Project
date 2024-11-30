@@ -120,7 +120,7 @@ app.get('/reset-password', (req, res) => {
 });
 
 app.post('/reset-password', async (req, res) => {
-  const { email,token } = req.body;
+  const { email } = req.body;
 
   if (!email) {
     return res.status(400).send('Email is required.');
@@ -211,7 +211,10 @@ const token = req.query.token;
 
 app.post('/set-password', async (req, res) => {
   const { tempPassword, newPassword, email } = req.body;
+const token = req.query.token; // Getting the token from the query string
 
+  console.log("Token from URL:", token); // Debugging: Check if token is being received
+  
   if (!newPassword || newPassword.length < 6) {
     return res.status(400).send('Password must be at least 6 characters long');
   }
@@ -221,10 +224,11 @@ app.post('/set-password', async (req, res) => {
   }
 
   try {
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ resetToken: token });
 
-    if (!user) {
-      return res.status(400).send('Invalid email address');
+  if (!user) {
+      req.flash('error', 'Invalid or expired token');
+      return res.redirect('/reset-password');
     }
 
     const isTempPasswordValid = await bcrypt.compare(tempPassword, user.tempPassword);
@@ -235,16 +239,18 @@ app.post('/set-password', async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(newPassword, 10);
 
-    user.password = newPassword;
+    user.password = hashedPassword;
     console.log(newPassword) 
     user.tempPassword = undefined; 
     user.tempPasswordExpires = undefined; 
 
     await user.save();
-    res.status(200).send('Password has been updated successfully');
+    req.flash('success', 'Password updated successfully');
+    res.redirect('/login'); 
   } catch (error) {
-    console.error('Error in /set-password route:', error);
-    res.status(500).send('Server error, please try again later');
+    console.error('Error resetting password:', error);
+    req.flash('error', 'Server error, please try again later');
+    res.redirect(`/set-password?token=${encodeURIComponent(token)}`);
   }
 });
 

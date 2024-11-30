@@ -8,9 +8,16 @@ const app = express();
 router.use(flash());
 const crypto = require('crypto');
 router.post('/set-password', async (req, res) => {
-  const {  tempPassword, newPassword, verifyPassword } = req.body;
-const token = req.query.token;
-    console.log(token) 
+  const { tempPassword, newPassword, verifyPassword } = req.body;
+  const token = req.query.token;  // Ensure you get the token from the query parameter
+
+  console.log("Token from URL:", token);  // Debugging: Check if token is being received
+
+  if (!token) {
+    req.flash('error', 'Invalid or expired token');
+    return res.redirect('/reset-password');  // Redirect if token is missing
+  }
+
   if (!newPassword || newPassword.length < 6) {
     req.flash('error', 'Password must be at least 6 characters long');
     return res.redirect(`/set-password?token=${encodeURIComponent(token)}`);
@@ -22,13 +29,12 @@ const token = req.query.token;
   }
 
   try {
-    const user = await User.findOne({
-      resetToken: token,
-          });
+    const user = await User.findOne({ resetToken: token });
+    
     if (!user) {
       req.flash('error', 'Invalid or expired token');
       return res.redirect('/reset-password');
-    }    
+    }
 
     const isTempPasswordValid = await bcrypt.compare(tempPassword, user.tempPassword);
 
@@ -36,12 +42,12 @@ const token = req.query.token;
       req.flash('error', 'Temporary password is invalid');
       return res.redirect(`/set-password?token=${encodeURIComponent(token)}`);
     }
-    const hashedPassword = await bcrypt.hash(newPassword, 10);
 
-    user.password = newPassword;
-    user.tempPassword = undefined;
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    user.password = hashedPassword;  
+    user.tempPassword = undefined;   
     user.tempPasswordExpires = undefined;
-    user.resetToken = undefined;
+    user.resetToken = undefined;     
     user.resetTokenExpires = undefined;
 
     await user.save();
