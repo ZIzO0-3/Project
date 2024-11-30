@@ -39,8 +39,9 @@ mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopol
 
 app.use('/api/auth', authRoutes);
 
-app.get('/', (req, res) => {
-  res.render('index');
+app.get('/', (req, res) => {  
+  const user = req.session.user || null; 
+  res.render('index', { user });  
 });
 
 app.get('/home', (req, res) => {
@@ -49,7 +50,9 @@ app.get('/home', (req, res) => {
 });
 
 app.get('/login', (req, res) => {
-  res.render('login');
+  const passwordUpdated = req.query.passwordUpdated;
+
+  res.render('login', { passwordUpdated });
 });
 
 app.post('/login', async (req, res) => {
@@ -254,6 +257,29 @@ app.post('/logout', (req, res) => {
     if (err) {
       console.error('Failed to destroy session:', err);
       return res.status(500).send('Failed to log out.');
+const users = [] 
+app.post('/update-password', (req, res) => {
+    const { userId, newPassword } = req.body;
+    
+       const user = users.find(u => u.id === userId);
+    
+    if (user) {
+        // Hash the new password
+        bcrypt.hash(newPassword, 10, (err, hashedPassword) => {
+            if (err) {
+                return res.status(500).send('Error hashing password');
+            }
+            
+            // Update the password (replace with actual DB update logic)
+            user.password = hashedPassword;
+            
+            // Redirect to login page with success message
+            res.redirect('/login?passwordUpdated=true');
+        });
+    } else {
+        res.status(404).send('User not found');
+    }
+});
     }
     res.redirect('/login'); 
   });

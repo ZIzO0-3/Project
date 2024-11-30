@@ -6,7 +6,7 @@ const router = express.Router();
 router.post('/set-password', async (req, res) => {
   const { tempPassword, newPassword, verifyPassword, email } = req.body;
 
-    if (!newPassword || newPassword.length < 6) {
+  if (!newPassword || newPassword.length < 6) {
     return res.status(400).json({ success: false, message: 'Password must be at least 6 characters long' });
   }
 
@@ -20,6 +20,11 @@ router.post('/set-password', async (req, res) => {
     if (!user) {
       return res.status(400).json({ success: false, message: 'Invalid email address' });
     }
+
+    if (!user.tempPassword) {
+      return res.status(400).json({ success: false, message: 'No temporary password found' });
+    }
+
     const isTempPasswordValid = await bcrypt.compare(tempPassword, user.tempPassword);
 
     if (!isTempPasswordValid || Date.now() > user.tempPasswordExpires) {
@@ -27,6 +32,7 @@ router.post('/set-password', async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(newPassword, 10);
+
     user.password = hashedPassword;
     user.tempPassword = undefined;
     user.tempPasswordExpires = undefined;
@@ -39,7 +45,4 @@ router.post('/set-password', async (req, res) => {
     res.status(500).json({ success: false, message: 'Server error, please try again later' });
   }
 });
-
-module.exports = router;
-
-
+module.exports = router

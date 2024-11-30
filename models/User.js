@@ -26,8 +26,8 @@ const userSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   userId: { type: String, unique: true, required: true },
   password: { type: String, required: true },
-  resetPasswordToken: { type: String },  
-  resetPasswordExpires: { type: Date }  
+  tempPassword: { type: String }, // Add this field for temporary password
+  tempPasswordExpires: { type: Date } // Add this field for temporary password expiration
 });
 
 module.exports = mongoose.model('User', userSchema);
