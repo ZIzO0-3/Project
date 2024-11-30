@@ -142,14 +142,47 @@ app.post('/reset-password', async (req, res) => {
     });
 
     const mailOptions = {
-      from: "eslammashorr@gmail.com",
-      to: user.email,
-      subject: 'Password Reset Request',
-      text: `You requested a password reset. Your temporary password is: \n\n${tempPassword}\n\n` +
-            `Please use this temporary password to reset your password. This password is valid for 1 hour.`,
-    };
+  from: "eslammashorr@gmail.com",
+  to: user.email,
+  subject: "Password Reset Request",
+html: `
+    <!doctype html>
+    <html>
+    <head>
+        <title>Password Reset</title>
+        <style>
+            body { background-color: #f9f9f9; margin: 0; padding: 0; font-family: Arial, sans-serif; }
+            .container { max-width: 600px; margin: 0 auto; background: #fff; border: 1px solid #ddd; }
+            .header { text-align: center; padding: 20px; background-color: #2F67F6; color: #fff; }
+            .header h1 { margin: 0; font-size: 24px; }
+            .content { padding: 20px; text-align: center; }
+            .button { background-color: #2F67F6; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; }
+            .footer { font-size: 12px; text-align: center; padding: 10px; color: #575757; }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="header">
+                <h1>Password Reset Request</h1>
+            </div>
+            <div class="content">
+                <p>It seems that you’ve forgotten your password.</p>
+                <p>Please use the button below to reset your password. Your temporary password is:</p>
+                <p><strong>${tempPassword}</strong></p>
+                <a href="https://example.com/reset-password" class="button">Reset Password</a>
+                <p style="margin-top: 20px;">If you did not request a password reset, you can ignore this email.</p>
+            </div>
+            <div class="footer">
+                <p>Some Firm Ltd, 35 Avenue, City 10115, USA</p>
+                <p><a href="#">Unsubscribe</a> from our emails</p>
+            </div>
+        </div>
+    </body>
+    </html>
+  `,
+};
 
-    transporter.sendMail(mailOptions, (err, info) => {
+transporter.sendMail(mailOptions, (err, info) => {
       if (err) {
         console.error('Error sending email:', err);
         return res.status(500).send('Failed to send email.');
