@@ -84,12 +84,17 @@
                         <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
                             <h1 class="mb-5 bg-white text-center px-3">Login</h1>
                         </div>
-                        <!-- Error Handling -->
                         <% if (errorMessage) { %>
-                            <div class="alert alert-danger">
-                                <%= errorMessage %>
-                            </div>
-                        <% } %>
+    <div class="alert alert-danger">
+        <%= errorMessage %>
+    </div>
+<% } %>
+
+<% if (passwordUpdated) { %>
+  <div class="alert alert-success">
+    <strong>Success!</strong> Password has been updated successfully.
+  </div>
+<% } %>
                         <div class="row g-3">
                             <div class="col-12">
                                 <div class="form-floating">
@@ -161,21 +166,16 @@
 
     <!-- Template Javascript -->
     <script src="/js/main.js"></script>
-
     <script>
-        // Show the success message if the password update was successful
-        window.onload = function() {
-            const successMessage = document.getElementById('successMessage');
-            if (successMessage) {
-                successMessage.style.display = 'block';
-            }
-        };
-
-        function closeSuccessMessage() {
-            const successMessage = document.getElementById('successMessage');
-            successMessage.style.display = 'none';
-        }
-    </script>
+  window.onload = function() {
+    const successMessage = document.getElementById('successMessage'); 
+    if (successMessage) {
+            setTimeout(function() {
+        successMessage.style.display = 'none';
+      }, 7000); 
+    }
+  };
+</script>
 </body>
 
 </html>

@@ -9,6 +9,7 @@ const crypto = require('crypto');
 const nodemailer = require('nodemailer');
 const session = require('express-session');
 const resetPasswordRoute = require('./routes/resetPasswordRoute');
+const flash = require('connect-flash'); // Add this line
 
 dotenv.config();
 
@@ -20,11 +21,11 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'project', 'public')));
 app.use(session({
   secret: "FO32",  
-  resave: true, 
+  resave: false, 
   saveUninitialized: true,  
   cookie: { secure: false }  
 }));
-
+app.use(flash())
 mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log('MongoDB connected'))
   .catch(err => console.log(err));
@@ -49,12 +50,19 @@ app.get('/home', (req, res) => {
   const user = req.session.user || null; 
   res.render('index', { user });
 });
-
-app.get('/login', (req, res) => {
-  const passwordUpdated = req.query.passwordUpdated;
-  res.render('login',{
-passwordUpdated,  errorMessage: req.flash('error') // If using flash messages for error handling
+app.use((req, res, next) => {
+  res.locals.messages = req.flash('error');
+  res.locals.successMessages = req.flash('success');
+  next();
 });
+app.get('/login', (req, res) => {
+  const passwordUpdated = req.session.passwordUpdated || false; 
+  const errorMessage = req.flash('error'); 
+  req.session.passwordUpdated = false; 
+  res.render('login', {
+    passwordUpdated: passwordUpdated,
+    errorMessage: errorMessage.length > 0 ? errorMessage[0] : null 
+  });
 });
 
 app.post('/login', async (req, res) => {
@@ -64,7 +72,8 @@ app.post('/login', async (req, res) => {
     const user = await User.findOne({ email: email });
 
     if (!user || user.password !== password) {
-      return res.render('login', { errorMessage: 'Invalid email or password' });
+      req.flash('error', 'Invalid email or password'); 
+      return res.redirect('/login'); 
     }
 
     req.session.user = user; 
@@ -208,9 +217,11 @@ app.get('/about', isAuthenticated, (req, res) => {
 });
 
 app.use((req, res, next) => {
-  res.locals.user = req.session.user || null; 
+  res.locals.messages = req.flash('error');       // Pass error messages
+  res.locals.successMessages = req.flash('success'); // Pass success messages
   next();
 });
+
 
 app.post('/logout', (req, res) => {
   req.session.destroy((err) => {
@@ -224,18 +235,16 @@ app.post('/logout', (req, res) => {
 
 app.post('/update-password', (req, res) => {
   const { userId, newPassword } = req.body;
-  const users = []; 
-
+  const users = [];  
   const user = users.find(u => u.id === userId);
-  
   if (user) {
     bcrypt.hash(newPassword, 10, (err, hashedPassword) => {
-      if (err) {
+  if (err) {
         return res.status(500).send('Error hashing password');
       }
-
       user.password = hashedPassword;
-      res.redirect('/login?passwordUpdated=true');
+      req.session.passwordUpdated = true;
+      res.redirect('/login');
     });
   } else {
     res.status(404).send('User not found');
