@@ -6,11 +6,12 @@ const userSchema = new mongoose.Schema({
   userId: { type: String, unique: true, required: true },
   password: { type: String, required: true },
   grade: { type: String, required: true }, 
-  role: { type: String, required: true }, 
+  role: { type: String, required: false }, 
   tempPassword: { type: String },
   tempPasswordExpires: { type: Date },
   resetToken: { type: String },
-  resetTokenExpires: { type: Date }
+  resetTokenExpires: { type: Date }, 
+  profilePhoto: { type: String }  // New field to store the profile photo URL or path
 });
 
 module.exports = mongoose.model('User', userSchema)

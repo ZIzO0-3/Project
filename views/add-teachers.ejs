@@ -51,13 +51,38 @@
                     </div>
                 </div>
                 <a href="/contact" class="nav-item nav-link">Contact</a>
-                <a href="/login" class="nav-item nav-link"><i class="fa fa-user"></i></a>
-                <a href="#" class="nav-item nav-link">
-                    <div id="google_translate_element"></div>
+                        <% if (user) { %>
+                <div class="nav-item d-flex align-items-center">
+                    <!-- Display user's profile photo if available -->
+                    <% if (user.profilePhoto) { %>
+                        <a href="/profile" class="nav-link d-flex align-items-center">
+                            <img src="<%= user.profilePhoto %>" alt="Profile Photo" 
+                                 class="rounded-circle me-2" style="width: 35px; height: 35px; object-fit: cover;">
+                            <span><%= user.username %></span>
+                        </a>
+                    <% } else { %>
+                        <!-- Default avatar -->
+                        <a href="/profile" class="nav-link d-flex align-items-center">
+                            <img src="https://cdn.glitch.global/44000450-5b21-4d41-9441-1920bc9beab4/9203764.png?v=1733040140957" 
+                                 alt="Default Profile Photo" 
+                                 class="rounded-circle me-2" style="width: 35px; height: 35px; object-fit: cover;">
+                            <span><%= user.username %></span>
+                        </a>
+                    <% } %>
+                    <form action="/logout" method="POST" class="ms-3">
+                        <button type="submit" class="btn btn-outline-danger btn-sm">Log Out</button>
+                    </form>
+                </div>
+            <% } else { %>
+                <!-- Show login button if user is not logged in -->
+                <a href="/login" class="nav-item nav-link">
+                    <button class="btn btn-primary btn-sm">Log In</button>
                 </a>
-            </div>
+            <% } %>
         </div>
-    </nav>
+    </div>
+</nav>
+    
 
     <!-- Header Start -->
     <div class="container-fluid bg-primary py-5 mb-5 page-header">

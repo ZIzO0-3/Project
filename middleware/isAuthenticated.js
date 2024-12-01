@@ -3,7 +3,7 @@ const isAuthenticated = (req, res, next) => {
     req.user = req.session.user; 
     return next();
   }
-  return res.status(401).json({ message: 'Unauthorized: Please log in' });
+  return res.redirect('/login');
 };
 
 module.exports = isAuthenticated;

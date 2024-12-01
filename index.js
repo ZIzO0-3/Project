@@ -13,10 +13,12 @@ const flash = require('connect-flash');
 dotenv.config();
 const MongoStore = require('connect-mongo');
 const isAdmin = require('./middleware/isAuthenticated'); 
-const Teacher = require('./models/Teacher'); // Teacher model
-const teacherRoutes = require('./routes/teachers'); // Assuming the route is in routes/teachers.js
+const Teacher = require('./models/Teacher'); 
+const teacherRoutes = require('./routes/teachers'); 
 const addTeachersRoutes = require('./routes/add-teachers');
 const app = express();
+const editProfileRoutes = require('./routes/edit-profile');
+const ProfileRoutes = require('./routes/profile');
 
 app.use(flash());
 app.use(express.json());
@@ -27,7 +29,7 @@ app.use(express.static(path.join(__dirname, 'project', 'public')));
 app.use(session({
   secret: "FO32",  
   resave: false, 
-  saveUninitialized: true,  
+  saveUninitialized: true ,  
   store: MongoStore.create({ mongoUrl: process.env.MONGO_URI }),
   cookie: {
     secure: false , 
@@ -43,11 +45,11 @@ mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopol
 
 function isAuthenticated(req, res, next) {
   if (req.session && req.session.user) {
-    req.user = req.session.user;
     return next(); 
   }
   res.redirect('/login'); 
 }
+
 app.use((req, res, next) => {
   res.locals.messages = req.flash('error'); 
   res.locals.successMessages = req.flash('success'); 
@@ -55,18 +57,30 @@ app.use((req, res, next) => {
 });
 app.use('/', addTeachersRoutes);
 app.use('/', teacherRoutes);
+app.use('/', editProfileRoutes);
+app.use('/', ProfileRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/reset-password', resetPasswordRoute);
 app.use('/uploads', express.static('uploads'));
-
-app.get('/', (req, res) => {  
-  const user = req.session.user ||  null; 
-  res.render('index', { user });
+app.use('/img', express.static('img'));
+app.get('/',async (req, res) => {
+  const user = req.session.user || null; 
+  let userdata = null;
+  if (user) {
+        userdata = await User.findOne({ email: user.email });
+  }
+  res.render('index', { user, user:userdata });
 });
 
-app.get('/home', (req, res) => {
+app.get('/home',async (req, res) => {
   const user = req.session.user || null; 
-  res.render('index', { user });
+  let userdata = null;
+  
+  if (user) {
+        userdata = await User.findOne({ email: user.email });
+  }
+  
+  res.render('index', { user:userdata});
 });
 
 app.get('/login', (req, res) => {
@@ -88,7 +102,13 @@ app.post('/login', async (req, res) => {
   const { email, password } = req.body;
   try {
     const user = await User.findOne({ email });
-    if (!user || user.password !== password) {
+  if (!user) {
+      req.session.errorMessage= `I can't find account with this email . <a href="/signup">Click here</a> to signup.`
+    return res.redirect('/login');
+    
+  };
+  
+    if (user.password !== password) {
       req.session.errorMessage = 'Invalid email or password'; 
       return res.redirect('/login');
     }
@@ -99,9 +119,27 @@ app.post('/login', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+app.get('/edit-profile', isAuthenticated, async (req, res) => {
+  try {
+    const user = req.session.user;
+    const passwordUpdated = req.session.passwordUpdated || false;
+  const accountCreated = req.session.accountCreated || false;
 
-app.get('/signup', (req, res) => {
-  res.render('signup', { errorMessage: null });
+  const errorMessage = req.session.errorMessage || null; 
+
+ 
+    res.render('edit-profile', { user });
+  } catch (error) {
+    console.error('Error fetching user data:', error.message);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+app.get('/signup',async (req, res) => {
+  const user = req.session.user || null; 
+  const userdata = await User.findOne({ email:user.email });
+  
+  res.render('signup', { errorMessage: null, user:userdata,user });
 });
 
 app.post('/signup', async (req, res) => {
@@ -109,7 +147,7 @@ app.post('/signup', async (req, res) => {
    if (!username || !studentId || !email || !password) {
     return res.render('signup', { errorMessage: 'All fields are required.' });
   }
-
+ 
   try {
      const existingUser = await User.findOne({
       $or: [{ email: email }, { userId: studentId }],
@@ -209,6 +247,7 @@ const token = crypto.randomBytes(20).toString('hex');
 </html>
   `,
 };
+    
 
 transporter.sendMail(mailOptions, (err, info) => {
       if (err) {
@@ -279,9 +318,11 @@ const token = req.query.token;
   }
 });
 
-app.get('/about', isAuthenticated, (req, res) => {
-  res.render('about');
+app.get('/about', async (req, res) => {
+  const user = req.session.user || null;     
+  res.render('about', { user});  
 });
+
 app.get('/teachers',isAuthenticated, async (req, res) => {
   try {
     const user = req.session.user || null;
@@ -314,6 +355,15 @@ app.get('/logout', (req, res) => {
       return res.redirect('/home');
     }
     res.clearCookie('connect.sid');
+    res.redirect('/login'); 
+  });
+});
+// Logout route
+app.post('/logout', (req, res) => {
+  req.session.destroy((err) => {
+    if (err) {
+      return res.status(500).send('Error during logout');
+    }
     res.redirect('/login'); 
   });
 });

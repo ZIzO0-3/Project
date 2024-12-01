@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Eslam Mashhor Edit Profile</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="" name="keywords">
+    <meta content="Edit user profile information." name="description">
+    <link href="https://cdn.glitch.global/44000450-5b21-4d41-9441-1920bc9beab4/Picsart_24-11-29_09-29-16-961.png?v=1732865376299" rel="icon">
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="lib/animate/animate.min.css" rel="stylesheet">
+    <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+</head>
+
+<body>
+    <!-- Navbar Start -->
+    <nav class="navbar navbar-expand-lg bg-white navbar-light shadow sticky-top p-0">
+        <a href="/home" class="navbar-brand d-flex align-items-center px-4 px-lg-5">
+            <p class="m-0 fw-bold" style="font-size: 25px;"><img src="https://cdn.glitch.global/44000450-5b21-4d41-9441-1920bc9beab4/Picsart_24-11-29_09-29-16-961.png?v=1732865376299" alt="" height="50px">Eslam<span
+                    style="color: #fb873f;">Mashhor</span></p>
+        </a>
+        <button type="button" class="navbar-toggler me-4" data-bs-toggle="collapse" data-bs-target="#navbarCollapse"
+            style="border: none;">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+            <div class="navbar-nav ms-auto p-4 p-lg-0">
+                <a href="/home" class="nav-item nav-link active">Home</a>
+                <a href="/about" class="nav-item nav-link">About</a>
+                <div class="nav-item dropdown">
+                    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
+                    <div class="dropdown-menu fade-down m-0">
+                        <a href="/vieos" class="dropdown-item">Videos</a>
+                        <a href="/news" class="dropdown-item">News</a>
+                        <a href="/teachers" class="dropdown-item">Teacher Data</a>
+                        <a href="/schededule" class="dropdown-item">Chapter Schedule</a>
+                        <a href="/curricula" class="dropdown-item">Curricula</a>  
+                        <a href="/attendance" class="dropdown-item">Attendance</a>
+                        <a href="/books" class="dropdown-item">Books & Referenceand</a>
+                    </div>
+                </div>
+                <a href="/contact" class="nav-item nav-link">Contact</a>
+                        <% if (user) { %>
+                <div class="nav-item d-flex align-items-center">
+                    <!-- Display user's profile photo if available -->
+                    <% if (user.profilePhoto) { %>
+                        <a href="/profile" class="nav-link d-flex align-items-center">
+                            <img src="<%= user.profilePhoto %>" alt="Profile Photo" 
+                                 class="rounded-circle me-2" style="width: 35px; height: 35px; object-fit: cover;">
+                            <span><%= user.username %></span>
+                        </a>
+                    <% } else { %>
+                        <!-- Default avatar -->
+                        <a href="/profile" class="nav-link d-flex align-items-center">
+                            <img src="https://cdn.glitch.global/44000450-5b21-4d41-9441-1920bc9beab4/9203764.png?v=1733040140957" 
+                                 alt="Default Profile Photo" 
+                                 class="rounded-circle me-2" style="width: 35px; height: 35px; object-fit: cover;">
+                            <span><%= user.username %></span>
+                        </a>
+                    <% } %>
+                    <form action="/logout" method="POST" class="ms-3">
+                        <button type="submit" class="btn btn-outline-danger btn-sm">Log Out</button>
+                    </form>
+                </div>
+            <% } else { %>
+                <!-- Show login button if user is not logged in -->
+                <a href="/login" class="nav-item nav-link">
+                    <button class="btn btn-primary btn-sm">Log In</button>
+                </a>
+            <% } %>
+        </div>
+    </div>
+</nav>
+    
+    <!-- Navbar End -->
+
+    <!-- Header Start -->
+    <div class="container-fluid bg-primary py-5 mb-5 page-header">
+        <div class="container py-5">
+            <div class="row justify-content-center">
+                <div class="col-lg-10 text-center">
+                    <h1 class="display-3 text-white animated slideInDown">Edit Profile</h1>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb justify-content-center">
+                            <li class="breadcrumb-item"><a class="text-white" href="/home">Home</a></li>
+                            <li class="breadcrumb-item"><a class="text-white" href="/profile">Profile</a></li>  
+                            <li class="breadcrumb-item text-white active" aria-current="page">Edit Profile</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+      <!-- Edit Profile Start --><div class="container-xxl py-2 mt-4">
+    <div class="container">
+        <div class="row g-4">
+            <center>
+                <form class="shadow p-4" style="max-width: 550px;" method="POST" action="/update-profile" enctype="multipart/form-data">
+                    <div class="text-center">
+                        <!-- Display Error Message -->
+                        <% if (errorMessage) { %>
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                <%= errorMessage %>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        <% } %>
+                        
+                        <!-- Profile Photo -->
+                        <img id="profileImage" 
+                             src="<%= user.profilePhoto || 'https://cdn.glitch.global/44000450-5b21-4d41-9441-1920bc9beab4/9203764.png?v=1733040140957' %>" 
+                             class="rounded-circle mb-3" 
+                             
+                             alt="Profile Photo" 
+                             width="150" 
+                             height="150" 
+                             style="object-fit: cover;">
+                        
+                        <!-- Change Profile Photo -->
+                        <div class="form-group mb-3">
+                            <label for="profilePhoto" class="btn btn-primary w-100 py-3">Change Profile Photo</label>
+                            <input type="file" 
+                                   class="form-control" 
+                                   id="profilePhoto" 
+                                   name="profilePhoto" 
+                                   accept="image/*" 
+                                   onchange="previewImage(event)" 
+                                   style="display: none;">
+                        </div>
+                    </div>
+
+                    <!-- Email Input -->
+                    <div class="form-floating mb-3">
+                        <input type="email" 
+                               class="form-control" 
+                               id="email" 
+                               name="email" 
+                               value="<%= user.email %>" 
+                               placeholder="Email Address"
+                               required>
+                        <label for="email">Email</label>
+                    </div>
+
+                    <!-- New Password Input (Optional) -->
+                    <div class="form-floating mb-3">
+                        <input type="password" 
+                               class="form-control" 
+                               id="newPassword" 
+                               name="newPassword" 
+                               placeholder="New Password" 
+                               minlength="6">
+                        <label for="newPassword">New Password (Optional)</label>
+                    </div>
+
+                    <!-- Confirm New Password Input -->
+                    <div class="form-floating mb-3">
+                        <input type="password" 
+                               class="form-control" 
+                               id="confirmPassword" 
+                               name="confirmPassword" 
+                               placeholder="Confirm New Password" 
+                               minlength="6">
+                        <label for="confirmPassword">Confirm New Password</label>
+                    </div>
+
+                    <!-- Save Button -->
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary w-100 py-3">Save Changes</button>
+                    </div>
+                </form>
+            </center>
+        </div>
+    </div>
+</div>
+
+
+    <!-- Footer Start -->
+    <div class="container-fluid bg-dark text-light footer pt-5 mt-5 wow fadeIn" data-wow-delay="0.1s">
+        <div class="container py-5">
+            <div class="row g-5">
+                <div class="col-lg-4 col-md-6">
+                    <h4 class="text-white mb-3">Quick Link</h4>
+                    <p><a class="text-light" href="about.html">About Us</a></p>
+                    <p><a class="text-light" href="contact.html">Contact Us</a></p>
+                    <p><a class="text-light" href="privacy.htmm">Privacy Policy</a></p>
+                    <p><a class="text-light" href="terms.html">Terms & Condition</a></p>
+                    <p><a class="text-light" href="faqs-help.html">FAQs & Help</a></p>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <h4 class="text-white mb-3">Contact</h4>
+                    <p class="mb-2"><i class="fa fa-map-marker-alt me-3"></i>11 سيد أبو العلا، ، قسم النزهة، محافظة القاهرة‬</p>
+                    <p class="mb-2"><i class="fa fa-phone-alt me-3"></i>+20 0123456789</p>
+                    <p class="mb-2"><i class="fa fa-envelope me-3"></i>eslammashor-business@gmail.com</p>
+                    <div class="d-flex pt-2">
+                        <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-facebook-f"></i></a>
+                        <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>            
+            </div>
+        </div>
+        <div class="container">
+            <div class="copyright">
+                <div class="row">
+                    <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
+                        &copy; <a class="border-bottom" href="/about">Eslam Mashhour</a>, All Right Reserved.
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>        
+  
+
+    <!-- Back to Top -->
+    <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
+
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="lib/wow/wow.min.js"></script>
+    <script src="lib/easing/easing.min.js"></script>
+    <script src="lib/waypoints/waypoints.min.js"></script>
+    <script src="lib/owlcarousel/owl.carousel.min.js"></script>
+    <!-- Template Javascript -->
+
+    <script src="/js/main.js"></script>
+    <script>
+function previewImage(event) {
+    const reader = new FileReader();    
+    reader.onload = function () {
+        const profileImage = document.getElementById('profileImage');
+        profileImage.src = reader.result;  // Set the image preview
+    }    
+    if (event.target.files[0]) {
+        reader.readAsDataURL(event.target.files[0]);  // Read the selected file
+    }
+}
+
+
+    </script>
+</body>
+
+</html>

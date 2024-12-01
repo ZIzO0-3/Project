@@ -57,13 +57,38 @@
                     </div>
                 </div>
                 <a href="/contact" class="nav-item nav-link">Contact</a>
-                <a href="/login" class="nav-item nav-link"><i class="fa fa-user"></i></a>
-                <a href="#" class="nav-item nav-link">
-                <div id="google_translate_element"> </div>
-                  </a>
+                        <% if (user) { %>
+                <div class="nav-item d-flex align-items-center">
+                    <!-- Display user's profile photo if available -->
+                    <% if (user.profilePhoto) { %>
+                        <a href="/profile" class="nav-link d-flex align-items-center">
+                            <img src="<%= user.profilePhoto %>" alt="Profile Photo" 
+                                 class="rounded-circle me-2" style="width: 35px; height: 35px; object-fit: cover;">
+                            <span><%= user.username %></span>
+                        </a>
+                    <% } else { %>
+                        <!-- Default avatar -->
+                        <a href="/profile" class="nav-link d-flex align-items-center">
+                            <img src="https://cdn.glitch.global/44000450-5b21-4d41-9441-1920bc9beab4/9203764.png?v=1733040140957" 
+                                 alt="Default Profile Photo" 
+                                 class="rounded-circle me-2" style="width: 35px; height: 35px; object-fit: cover;">
+                            <span><%= user.username %></span>
+                        </a>
+                    <% } %>
+                    <form action="/logout" method="POST" class="ms-3">
+                        <button type="submit" class="btn btn-outline-danger btn-sm">Log Out</button>
+                    </form>
                 </div>
-            </div>
+            <% } else { %>
+                <!-- Show login button if user is not logged in -->
+                <a href="/login" class="nav-item nav-link">
+                    <button class="btn btn-primary btn-sm">Log In</button>
+                </a>
+            <% } %>
+        </div>
+    </div>
 </nav>
+    
     <!-- Navbar End -->
 
     <!-- Header Start -->
@@ -83,7 +108,30 @@
         </div>
     </div>
     <!-- Header End -->       
-   
+   <!-- Search Engine -->
+<div class="container-fluid bg-light py-3">
+    <div class="container">
+        <form method="GET" action="/teachers" class="row g-3">
+            <div class="col-md-10">
+                <label for="search" class="form-label" style="display: block; text-align: center; font-size: 18px; color: #333;">
+                    Search for a Teacher
+                </label>
+                <input 
+                    type="text" 
+                    class="form-control" 
+                    name="query" 
+                    id="search" 
+                    placeholder="Search by teacher's name, subject, or number" 
+                    value="<%= query || '' %>"
+                    style="text-align: center; font-size: 16px; color: #555;"
+                >
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary w-100">Search</button>
+            </div>
+        </form>
+    </div>
+</div>
     <!-- Teachers Start -->
     <div class="container-xxl py-5">
         <div class="container">
@@ -112,7 +160,6 @@
         </div>
 </div>
     
-
     
   <!-- Footer Start -->
     <div class="container-fluid bg-dark text-light footer pt-5 mt-5 wow fadeIn" data-wow-delay="0.1s">

@@ -643,3 +643,11 @@
   touch-action: manipulation;
 }
 
+/* Ensure profile photo is displayed as a perfect circle */
+#profileImage {
+    width: 75px; /* Set the width of the image */
+    height: 75px; /* Set the height of the image */
+    object-fit: cover; /* Ensures the image fits within the circle */
+    border-radius: 50%; /* Make it circular */
+    overflow: hidden; /* Ensure that any overflow is hidden */
+}
