@@ -32,7 +32,7 @@
 
     <!-- Navbar Start -->
     <nav class="navbar navbar-expand-lg bg-white navbar-light shadow sticky-top p-0">
-        <a href="index.html" class="navbar-brand d-flex align-items-center px-4 px-lg-5">
+        <a href="home" class="navbar-brand d-flex align-items-center px-4 px-lg-5">
             <p class="m-0 fw-bold" style="font-size: 25px;"><img src="https://cdn.glitch.global/44000450-5b21-4d41-9441-1920bc9beab4/Picsart_24-11-29_09-29-16-961.png?v=1732865376299" alt="" height="50px">Eslam<span
                     style="color: #fb873f;">Mashhor</span></p>
         </a>
@@ -71,10 +71,10 @@
         <div class="container py-5">
             <div class="row justify-content-center">
                 <div class="col-lg-10 text-center">
-                    <h1 class="display-3 text-white animated slideInDown">About Us</h1>
+                    <h1 class="display-3 text-white animated slideInDown">School Teachers</h1>
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb justify-content-center">
-                            <li class="breadcrumb-item"><a class="text-white" href="index.html">Home</a></li>
+                            <li class="breadcrumb-item"><a class="text-white" href="/home">Home</a></li>
                             <li class="breadcrumb-item text-white active" aria-current="page">About</li>
                         </ol>
                     </nav>
@@ -82,66 +82,9 @@
             </div>
         </div>
     </div>
-    <!-- Header End -->
-
-
-    
-
-
-
-    <!-- Team Start 
-    <div class="container-xxl py-5">
-        <div class="container">
-            <div class="row g-4">
-                <div class="col-lg-6 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
-                    <div class="team-item bg-light">
-                        <div class="overflow-hidden text-center pt-5">
-                            <img class="img-fluid" src="img/team-1.png" alt="" style="height: 500px; width: 300px;">
-                        </div>
-                        <div class="position-relative d-flex justify-content-center" style="margin-top: -23px;">
-                            <div class="bg-light d-flex justify-content-center pt-2 px-1">
-                                <a target="_blank" class="btn btn-sm-square btn-primary mx-1"
-                                    href="https://www.linkedin.com/in/ajay-panwar-8077b925a/"><i
-                                        class="fab fa-linkedin"></i></a>
-                                <a target="_blank" class="btn btn-sm-square btn-primary mx-1"
-                                    href="mailto:ajaypanwar7472@gmail.com"><i class="fa fa-envelope"></i></a>
-                                <a target="_blank" class="btn btn-sm-square btn-primary mx-1"
-                                    href="https://github.com/ajaypanwar7472"><i class="fab fa-github"></i></a>
-                            </div>
-                        </div>
-                        <div class="text-center p-4">
-                            <h5 class="mb-0">Ajay Kumar</h5>
-                            <small>Team Leader</small>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-6 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
-                    <div class="team-item bg-light">
-                        <div class="overflow-hidden text-center pt-5">
-                            <img class="img-fluid" src="img/team-2.png" alt="" style="height: 500px; width: 300px;">
-                        </div>
-                        <div class="position-relative d-flex justify-content-center" style="margin-top: -23px;">
-                            <div class="bg-light d-flex justify-content-center pt-2 px-1">
-                                <a target="_blank" class="btn btn-sm-square btn-primary mx-1"
-                                    href="https://www.linkedin.com/in/keerti-vishwkarma-8ba754243/"><i
-                                        class="fab fa-linkedin"></i></a>
-                                <a target="_blank" class="btn btn-sm-square btn-primary mx-1"
-                                    href="mailto:keertidvcorai@gmail.com"><i class="fa fa-envelope"></i></a>
-                                <a target="_blank" class="btn btn-sm-square btn-primary mx-1"
-                                    href="https://github.com/keerti1924"><i class="fab fa-github"></i></a>
-                            </div>
-                        </div>
-                        <div class="text-center p-4">
-                            <h5 class="mb-0">Keerti Vishwkarma</h5>
-                            <small>Team Member</small>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Team End -->
-<!-- Team Start -->
+    <!-- Header End -->       
+   
+    <!-- Teachers Start -->
     <div class="container-xxl py-5">
         <div class="container">
             <div class="row g-4">
@@ -149,24 +92,26 @@
                 <div class="col-lg-6 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
                     <div class="team-item bg-light">
                         <div class="overflow-hidden text-center pt-5">
-                            <img class="img-fluid" src="<%= teacher.photo || 'img/default-teacher.png' %>" alt="" style="height: 500px; width: 300px;">
-                        </div>
+       <img class="img-fluid" src="/uploads/<%= teacher.photo %>" alt="<%= teacher.name %>" style="height: 300px; width: 200px;">
+</div>
                         <div class="position-relative d-flex justify-content-center" style="margin-top: -23px;">
                             <div class="bg-light d-flex justify-content-center pt-2 px-1">
                                 <!-- You can add more buttons like social media links if needed -->
                             </div>
                         </div>
                         <div class="text-center p-4">
-                            <h5 class="mb-0"><%= teacher.name %></h5>
-                            <small><%= teacher.subject %></small>
-                        </div>
+    <h5 class="mb-0"><%= teacher.name %></h5>
+    <small><%= teacher.subject %></small><br>
+    <small>Number: <%= teacher.number %></small><br>
+    <small>Grades: <%= teacher.grade %></small>
+</div>
                     </div>
                 </div>
                 <% }); %>
             </div>
         </div>
-    </div>
-    <!-- Team End -->
+</div>
+    
 
     
   <!-- Footer Start -->

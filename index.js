@@ -11,7 +11,8 @@ const session = require('express-session');
 const resetPasswordRoute = require('./routes/resetPasswordRoute');
 const flash = require('connect-flash'); 
 dotenv.config();
-const isAdmin = require('./middleware/isAdmin'); 
+const MongoStore = require('connect-mongo');
+const isAdmin = require('./middleware/isAuthenticated'); 
 const Teacher = require('./models/Teacher'); // Teacher model
 const teacherRoutes = require('./routes/teachers'); // Assuming the route is in routes/teachers.js
 const addTeachersRoutes = require('./routes/add-teachers');
@@ -27,9 +28,10 @@ app.use(session({
   secret: "FO32",  
   resave: false, 
   saveUninitialized: true,  
+  store: MongoStore.create({ mongoUrl: process.env.MONGO_URI }),
   cookie: {
     secure: false , 
-    maxAge: 1000 * 60 * 60 * 24 // 1 day
+    maxAge: 1000 * 60 * 60 * 24 
   }
 }));
 
@@ -46,7 +48,6 @@ function isAuthenticated(req, res, next) {
   }
   res.redirect('/login'); 
 }
-
 app.use((req, res, next) => {
   res.locals.messages = req.flash('error'); 
   res.locals.successMessages = req.flash('success'); 
@@ -56,6 +57,7 @@ app.use('/', addTeachersRoutes);
 app.use('/', teacherRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/reset-password', resetPasswordRoute);
+app.use('/uploads', express.static('uploads'));
 
 app.get('/', (req, res) => {  
   const user = req.session.user ||  null; 
@@ -90,7 +92,7 @@ app.post('/login', async (req, res) => {
       req.session.errorMessage = 'Invalid email or password'; 
       return res.redirect('/login');
     }
-    req.session.user = { id: user._id, email: user.email };
+    req.session.user = { id: user._id, email: user.email, grade: user.grade};
     res.redirect('/home');
   } catch (err) {
     console.error('Error during login:', err);
@@ -166,6 +168,7 @@ const token = crypto.randomBytes(20).toString('hex');
         pass: "ukug efhf ivco auua",
       },
     });
+   
     console.log(user.email)
     const mailOptions = {
   from: "eslammashorr@gmail.com",
@@ -279,19 +282,27 @@ const token = req.query.token;
 app.get('/about', isAuthenticated, (req, res) => {
   res.render('about');
 });
-app.get('/teachers', isAuthenticated, (req, res) => {
-  res.render('team');
+app.get('/teachers',isAuthenticated, async (req, res) => {
+  try {
+    const user = req.session.user || null;
+    const teachers = await Teacher.find();
+    res.render('teachers', { user, teachers });
+  } catch (error) {
+    console.error('Error fetching teachers:', error.message);
+    res.status(500).send('Internal Server Error');
+  }
 });
+
 app.get('/add-teachers', isAuthenticated, isAdmin, (req, res) => {
   const user = req.session.user || null; 
       const successMessage = req.query.successMessage || null;
       const errorMessage = req.query.errorMessage || null; 
-  res.render('add-teachers', {user, successMessage, errorMessage});  // Pass successMessage to the EJS template
+  res.render('add-teachers', {user, successMessage, errorMessage}); 
 });
 
 app.use((req, res, next) => {
-  res.locals.messages = req.flash('error');       // Pass error messages
-  res.locals.successMessages = req.flash('success'); // Pass success messages
+  res.locals.messages = req.flash('error');
+  res.locals.successMessages = req.flash('success')
   next();
 });
 
@@ -302,6 +313,7 @@ app.get('/logout', (req, res) => {
       console.error('Error destroying session:', err);
       return res.redirect('/home');
     }
+    res.clearCookie('connect.sid');
     res.redirect('/login'); 
   });
 });
