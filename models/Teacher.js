@@ -7,6 +7,7 @@ const teacherSchema = new mongoose.Schema({
     type: [String], 
     required: true,
   },
+  classes:{ type:[String] }, 
   number: { type: Number, required: true },
   photo: { type: String, required: true }, 
 });

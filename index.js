@@ -81,7 +81,6 @@ app.get('/home',async (req, res) => {
   if (user) {
         userdata = await User.findOne({ email: user.email });
   }
-  
   res.render('index', { user:userdata});
 });
 
@@ -324,18 +323,31 @@ const token = req.query.token;
 });
 
 app.get('/about', async (req, res) => {
-  const user = req.session.user || null;     
-  res.render('about', { user});  
+    const user = req.session.user || null; 
+  let userdata = null;
+  
+  if (user) {
+        userdata = await User.findOne({ email: user.email });
+  }
+  res.render('about', { user:userdata});  
 });
 app.get('/contact', async (req, res) => {
-  const user = req.session.user || null;     
-  res.render('contact', { user});  
+    const user = req.session.user || null; 
+  let userdata = null;
+  
+  if (user) {
+        userdata = await User.findOne({ email: user.email });
+  }res.render('contact', { user:userdata} );  
 });
 app.get('/teachers',isAuthenticated, async (req, res) => {
   try {
-    const user = req.session.user || null;
-    const teachers = await Teacher.find();
-    res.render('teachers', { user, teachers });
+      const user = req.session.user || null; 
+  let userdata = null;
+  
+  if (user) {
+        userdata = await User.findOne({ email: user.email });
+  }    const teachers = await Teacher.find();
+    res.render('teachers', { user:userdata , teachers });
   } catch (error) {
     console.error('Error fetching teachers:', error.message);
     res.status(500).send('Internal Server Error');
@@ -404,13 +416,12 @@ const PORT = 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
-
 /*
 const https = require("https");
 const fs = require("fs");
 
-const fileUrl = "https://cdn.glitch.global/44000450-5b21-4d41-9441-1920bc9beab4/%D8%A7%D9%84%D8%B5%D9%81%20%D8%A7%D9%84%D8%AB%D8%A7%D9%86%D9%89%20%D8%A7%D9%84%D8%AB%D8%A7%D9%86%D9%88%D9%89.xlsx?v=1733123149575"; // Replace with your file URL
-const localPath = "./data/2sec.xlsx"; // Change the destination as needed
+const fileUrl = "https://cdn.glitch.global/44000450-5b21-4d41-9441-1920bc9beab4/%D8%A7%D9%84%D8%B5%D9%81%20%D8%A7%D9%84%D8%AB%D8%A7%D9%86%D9%89%20%D8%A7%D9%84%D8%AB%D8%A7%D9%86%D9%88%D9%89.xlsx?v=1733130726812" ; // Replace with your file URL
+const localPath = "./data/2sec-2nd.xlsx"; // Change the destination as needed
 
 https.get(fileUrl, (response) => {
   const fileStream = fs.createWriteStream(localPath);
@@ -420,7 +431,5 @@ https.get(fileUrl, (response) => {
     console.log("File downloaded and saved to:", localPath);
   });
 });
-
 */
-
 

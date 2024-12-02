@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="utf-8">
     <title>Marks</title>
@@ -12,7 +11,6 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
     <link href="/css/bootstrap.min.css" rel="stylesheet">
     <link href="/css/style.css" rel="stylesheet">
-
     <style>
         .table-container {
             width: 100%;
@@ -42,18 +40,8 @@
             text-align: left;
             color: #333;
         }
-
-        .colored-cell {
-            background-color: #007bff;
-            color: white;
-            width: 20px;
-            height: 20px;
-            display: inline-block;
-            border-radius: 4px;
-        }
     </style>
 </head>
-
 <body>
     <!-- Navbar Start -->
     <nav class="navbar navbar-expand-lg bg-white navbar-light shadow sticky-top p-0">
@@ -71,10 +59,37 @@
                 <a href="/about" class="nav-item nav-link">About</a>
                 <a href="/marks" class="nav-item nav-link active">Marks</a>
                 <a href="/contact" class="nav-item nav-link">Contact</a>
-                <a href="/login" class="nav-item nav-link"><i class="fa fa-user"></i></a>
-            </div>
+                        <% if (user) { %>
+                <div class="nav-item d-flex align-items-center">
+                    <!-- Display user's profile photo if available -->
+                    <% if (user.profilePhoto) { %>
+                        <a href="/profile" class="nav-link d-flex align-items-center">
+                            <img src="<%= user.profilePhoto %>" alt="Profile Photo" 
+                                 class="rounded-circle me-2" style="width: 35px; height: 35px; object-fit: cover;">
+                            <span><%= user.username %></span>
+                        </a>
+                    <% } else { %>
+                        <!-- Default avatar -->
+                        <a href="/profile" class="nav-link d-flex align-items-center">
+                            <img src="https://cdn.glitch.global/44000450-5b21-4d41-9441-1920bc9beab4/9203764.png?v=1733040140957" 
+                                 alt="Default Profile Photo" 
+                                 class="rounded-circle me-2" style="width: 35px; height: 35px; object-fit: cover;">
+                            <span><%= user.username %></span>
+                        </a>
+                    <% } %>
+                    <form action="/logout" method="POST" class="ms-3">
+                        <button type="submit" class="btn btn-outline-danger btn-sm">Log Out</button>
+                    </form>
+                </div>
+            <% } else { %>
+                <!-- Show login button if user is not logged in -->
+                <a href="/login" class="nav-item nav-link">
+                    <button class="btn btn-primary btn-sm">Log In</button>
+                </a>
+            <% } %>
         </div>
-    </nav>
+    </div>
+</nav>
 
     <!-- Header Start -->
     <div class="container-fluid bg-primary py-5 mb-5 page-header">
@@ -94,43 +109,75 @@
     </div>
 
     <!-- Marks Content Start -->
-    <div class="container">
+<!-- Dropdown for class
+ election -->
+<div class="container">
   <h2>Your Marks</h2>
   <% if (errorMessage) { %>
     <div class="alert alert-danger">
       <%= errorMessage %>
     </div>
   <% } else { %>
-    <div class="student-info">
-      <p><strong>Name:</strong> <%= student.username %></p>
-      <p><strong>Grade:</strong> <%= student.grade %></p>
-      <p><strong>National ID:</strong> <%= nationalId %></p>
-      <p><strong>Class:</strong> <%= student.class %></p>
-      <p><strong>School:</strong> الشهيد اسلام مشهور المتميزه</p>
-    </div>
+    <!-- Class Selection Dropdown -->
+    <form method="GET" action="/marks">
+      <div class="form-group">
 
-    <h3>Marks:</h3>
-    <table>
-      <thead>
-        <tr>
-          <th>Subject</th>
-          <th>Marks</th>
-          <th>Grade</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% Object.keys(marks).forEach(function(subject) { %>
+        <label for="classSelect">:اختر المرحله الدراسيه</label>
+
+        <select name="class" id="classSelect" class="form-control">
+
+          <option value= "hide">اختر الصف الدراسي</option> 
+
+          <option value="1st" <% if (classSelect === '1st') { %>selected<% } %>>الصف الدراسي الأول</option>
+
+          <option value="2nd" <% if (classSelect === '2nd') { %>selected<% } %>>الصف الدراسي الثاني</option>
+
+        </select>
+
+      </div>
+
+      
+          <div class="text-center mt-3">
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </div>
+    </form>
+    
+    <% if (marks) { %>
+      <!-- Student Information Section -->
+      <div class="student-info">
+        <p><strong>Name:</strong> <%= username %></p>
+        <p><strong>Grade:</strong> <%= student.grade %></p>
+        <p><strong>National ID:</strong> <%= nationalId %></p>
+        <p><strong>Class:</strong> <%= student.class %></p>
+        <p><strong>School:</strong> الشهيد اسلام مشهور المتميزه</p>
+      </div>
+
+      <!-- Marks Table -->
+      <h3>Marks:</h3>
+      <table class="table">
+        <thead>
           <tr>
-            <td><%= subject %></td>
-            <td><%= marks[subject].marks %></td>
-            <td><%= marks[subject].grade %></td>
+            <th>Subject</th>
+            <th>Marks</th>
+            <th>Grade</th>
           </tr>
-        <% }); %>
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          <% Object.keys(marks).forEach(function(subject) { %>
+            <tr>
+              <td><%= subject %></td>
+              <td><%= marks[subject] || "No mark" %></td> <!-- Display No mark if empty -->
+              <td><%= marks[subject] !== undefined && marks[subject] >= 50 ? "Pass" : "Fail" %></td> <!-- Optional Grade based on marks -->
+            </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    <% } %>
   <% } %>
 </div>
-            
+
+
+
     <!-- Footer Start -->
     <footer class="container-fluid bg-dark text-light footer pt-5 mt-5">
         <div class="container py-5">
@@ -152,5 +199,5 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-
 </html>
+
