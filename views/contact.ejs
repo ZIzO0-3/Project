@@ -63,7 +63,7 @@
                                  class="rounded-circle me-2" style="width: 35px; height: 35px; object-fit: cover;">
                             <span><%= user.username %></span>
                         </a>
-                    <% } else { %>
+<% } else { %>
                         <!-- Default avatar -->
                         <a href="/profile" class="nav-link d-flex align-items-center">
                             <img src="https://cdn.glitch.global/44000450-5b21-4d41-9441-1920bc9beab4/9203764.png?v=1733040140957" 
@@ -85,118 +85,108 @@
         </div>
     </div>
 </nav>
-    
-    <div class="container-fluid bg-primary py-5 mb-5 page-header">
+<div class="container-fluid bg-primary py-5 mb-5 page-header">
         <div class="container py-5">
             <div class="row justify-content-center">
                 <div class="col-lg-10 text-center">
-                    <h1 class="display-3 text-white animated slideInDown">Home</h1>
+                    <h1 class="display-3 text-white animated slideInDown">Contact Us</h1>
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb justify-content-center">
                             <li class="breadcrumb-item"><a class="text-white" href="/home">Home</a></li>
+                            <li class="breadcrumb-item"><a class="text-white" href="#">Contact Us</a></li>
                         </ol>
                     </nav>
                 </div>
             </div>
         </div>
     </div>
-    <!-- Header End -->
-    <!-- Navbar End -->
+
+    <!-- Contact Start -->
+    <div class="container-xxl py-5">
         <div class="container">
+            <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
+                <h1 class="mb-5 bg-white text-center px-3">Contact Us</h1>
+
+            </div>
             <div class="row g-4">
-                <div class="col-lg-3 col-sm-6 wow fadeInUp" data-wow-delay="0.1s">
-                    <div class="service-item text-center pt-3 shadow">
-                        <div class="p-4">
-                            <img src="img/icon1.png" alt="" width="60px" class="mb-4">
-                            <h5 class="mb-3">Grades Overview</h5>
-                            <p>View and track your grades throughout the academic year.</p>
+                <div class="col-lg-6 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
+                    <h5>Get In Touch</h5>                                        <div class="d-flex align-items-center mb-3">
+                        <div class="d-flex align-items-center justify-content-center flex-shrink-0"
+                            style="width: 50px; height: 50px; background-color: #fb873f;">
+                            <i class="fa fa-map-marker-alt text-white"></i>
+                        </div>
+                        <div class="ms-3">
+                            <h5>School</h5>
+                            <p class="mb-0">11 سيد أبو العلا، ، قسم النزهة، محافظة القاهرة</p>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="d-flex align-items-center justify-content-center flex-shrink-0"
+                            style="width: 50px; height: 50px; background-color: #fb873f;">
+                            <i class="fa fa-phone-alt text-white"></i>
+                        </div>
+                        <div class="ms-3">
+                            <h5>Mobile</h5>
+                            <p class="mb-0">+20 0123456789</p>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <div class="d-flex align-items-center justify-content-center flex-shrink-0"
+                            style="width: 50px; height: 50px; background-color: #fb873f;">
+                            <i class="fa fa-envelope-open text-white"></i>
+                        </div>
+                        <div class="ms-3">
+                            <h5>Email</h5>
+                            <p class="mb-0">eslammashorr@gmail.com</p>
                         </div>
                     </div>
                 </div>
 
-    <!-- Videos Section -->
-    <div class="col-lg-3 col-sm-6 wow fadeInUp" data-wow-delay="0.3s">
-                    <div class="service-item text-center pt-3 shadow">
-                        <div class="p-4">
-                            <img src="img/icon2.png" alt="" width="60px" class="mb-4">
-                            <h5 class="mb-3">Class Videos</h5>
-                            <p>Watch all the lessons and videos uploaded by your teachers.</p>
+                <div class="col-lg-6 col-md-12 wow fadeInUp" data-wow-delay="0.5s">
+                    <form>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" id="name" required placeholder="Your Name">
+                                    <label for="name">Your Name</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="email" class="form-control" id="email" required
+                                        placeholder="Your Email">
+                                    <label for="email">Your Email</label>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" id="subject" required placeholder="Subject">
+                                    <label for="subject">Subject</label>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-floating">
+                                    <textarea class="form-control" required placeholder="Leave a message here"
+                                        id="message" style="height: 150px"></textarea>
+                                    <label for="message">Message</label>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <button class="btn btn-primary w-100 py-3" type="submit"><a
+                                        href="mailto:eslammashorr@gmail.com" class="text-decoration-none"
+                                        style="color: #fff;" type="submit">Send Message</a></button>
+                            </div>
                         </div>
-                    </div>
+                    </form>
                 </div>
-
-             
-    <!-- News Section -->    
-<div class="col-lg-3 col-sm-6 wow fadeInUp" data-wow-delay="0.3s">
-                    <div class="service-item text-center pt-3 shadow">
-                        <div class="p-4">
-                                <img src="https://cdn.glitch.global/44000450-5b21-4d41-9441-1920bc9beab4/icons8-news-330.png?v=1732861855436" alt="" width="60px" class="mb-4">
-                            <h5 class="mb-3">Class News</h5>
-                            <p class="text-center">Stay updated with the latest announcements and updates from your teachers.</p>
-                        </div>
-                    </div>
-                </div>              
-    <!-- Teacher Directory Section -->    
-<div class="col-lg-3 col-sm-6 wow fadeInUp" data-wow-delay="0.3s">
-                    <div class="service-item text-center pt-3 shadow">
-                        <div class="p-4">
-                             <img src="https://cdn.glitch.global/44000450-5b21-4d41-9441-1920bc9beab4/silky-searching_80.png?v=1732861874202" alt="" width="60px" class="mb-4">
-                            <h5 class="mb-3">Teachers Directory</h5>
-                            <p class="text-center">Find contact information and availability for all your teachers in one place.</p>
-                        </div>
-                    </div>
-                </div>
-    <!-- Schedule Section -->   
-<div class="col-lg-3 col-sm-6 wow fadeInUp" data-wow-delay="0.3s">
-                    <div class="service-item text-center pt-3 shadow">
-                        <div class="p-4">
-                              <img src="https://cdn.glitch.global/44000450-5b21-4d41-9441-1920bc9beab4/download%20(1).png?v=1732864259788" alt="" width="70px" class="mb-4">
-                            <h5 class="mb-3">Class Schedule</h5>
-                            <p class="text-center">Check the schedule for class and topics to stay ahead in your studies.</p>
-                       </div>
-                    </div>
-                </div>
-    <!-- Curricula Section -->    
-<div class="col-lg-3 col-sm-6 wow fadeInUp" data-wow-delay="0.3s">
-                    <div class="service-item text-center pt-3 shadow">
-                        <div class="p-4">
-                                <img src="https://cdn.glitch.global/44000450-5b21-4d41-9441-1920bc9beab4/download%20(2).png?v=1732864440092" alt="" width="60px" class="mb-4">
-                            <h2 class="text-center mb-4">Curricula</h2>
-                      <p class="text-center">Explore the detailed curricula for each period and subject.</p>
-                       </div>
-                    </div>
-                </div>
-          <div class="col-lg-3 col-sm-6 wow fadeInUp" data-wow-delay="0.3s">
-                    <div class="service-item text-center pt-3 shadow">
-                        <div class="p-4">
-                                <img src="https://cdn.glitch.global/44000450-5b21-4d41-9441-1920bc9beab4/Picsart_24-12-02_09-17-11-655.png?v=1733123863564" alt="" width="60px" class="mb-4">
-                            <h2 class="text-center mb-4">Student Marks</h2>
-<p class="text-center">View your school performance and detailed grades across all subjects. Stay updated with your progress and achievements.</p>
-
-                    </div>
-                </div>
-                     </div>    
-    <!-- Attendance Section -->
-          <div class="col-lg-3 col-sm-6 wow fadeInUp" data-wow-delay="0.3s">
-                    <div class="service-item text-center pt-3 shadow">
-                        <div class="p-4">
-                                <img src="https://cdn.glitch.global/44000450-5b21-4d41-9441-1920bc9beab4/10156021.png?v=1732864630746" alt="" width="75px" class="mb-4">
-                            <h2 class="text-center mb-4">Attendance</h2>
-            <p class="text-center">Monitor your attendance record and ensure consistency in class.</p>
+            </div>
         </div>
-                    </div>
-                </div>      
-    <!-- References Section -->
-          <div class="col-lg-3 col-sm-6 wow fadeInUp" data-wow-delay="0.3s">
-                    <div class="service-item text-center pt-3 shadow">
-                        <div class="p-4">
-                                <img src="https://cdn.glitch.global/44000450-5b21-4d41-9441-1920bc9beab4/5832416.png?v=1732864732425" alt="" width="75px" class="mb-4">
-                            <h2 class="text-center mb-4">Books & References</h2>
-            <p class="text-center">Access all textbooks, reference materials, and additional learning resources here.</p>
-        </div>
-                    </div>
-                </div>           
-    <!-- Footer Start -->
+    </div>
+    <!-- Contact End -->
+
+
+    
+  <!-- Footer Start -->
     <div class="container-fluid bg-dark text-light footer pt-5 mt-5 wow fadeIn" data-wow-delay="0.1s">
         <div class="container py-5">
             <div class="row g-5">
@@ -243,6 +233,20 @@
     <script src="lib/waypoints/waypoints.min.js"></script>
     <script src="lib/owlcarousel/owl.carousel.min.js"></script>
 
+    <!-- Footer End -->
+
+
+    <!-- Back to Top -->
+    <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
+
+
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="lib/wow/wow.min.js"></script>
+    <script src="lib/easing/easing.min.js"></script>
+    <script src="lib/waypoints/waypoints.min.js"></script>
+    <script src="lib/owlcarousel/owl.carousel.min.js"></script>
 
     <!-- Template Javascript -->
     <script src="js/main.js"></script>

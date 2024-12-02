@@ -11,7 +11,7 @@ const userSchema = new mongoose.Schema({
   tempPasswordExpires: { type: Date },
   resetToken: { type: String },
   resetTokenExpires: { type: Date }, 
-  profilePhoto: { type: String }  // New field to store the profile photo URL or path
+  marks: { type: Array, default: [] }, // Example: [{ subject: "Math", mark: 85 }]
 });
 
 module.exports = mongoose.model('User', userSchema)

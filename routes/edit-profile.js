@@ -19,48 +19,11 @@ router.get('/edit-profile', isAuthenticated, async (req, res) => {
     res.status(500).send('Internal Server Error');
   }
 });
-/*
+
 router.post('/update-profile', isAuthenticated, upload.single('profilePhoto'), async (req, res) => {
   try {
     const { email, newPassword, confirmPassword } = req.body;
-    const user = req.session.user;
-    
-    let profilePhoto;
-    if (req.file) {
-      profilePhoto = '/uploads/' + req.file.filename;
-    }
-
-    let updatedFields = { email };
-    
-    if (newPassword) {
-      if (newPassword !== confirmPassword) {
-        return res.status(400).send('Passwords do not match');
-      }
-      updatedFields.password = bcrypt.hashSync(newPassword, 10);
-    }
-
-    if (profilePhoto) {
-      updatedFields.profilePhoto = profilePhoto;
-    }
-
-    const updatedUser = await User.findByIdAndUpdate(
-      user._id,
-      updatedFields,
-      { new: true }
-    );
-    
-    req.session.user = updatedUser;
-    res.redirect('/profile');
-  } catch (error) {
-    console.error('Error updating profile:', error.message);
-    res.status(500).send('Internal Server Error');
-  }
-});
-*/
-router.post('/update-profile', isAuthenticated, upload.single('profilePhoto'), async (req, res) => {
-  try {
-    const { email, newPassword, confirmPassword } = req.body;
-  //  const user = req.session.user;
+  
     const user = await User.findOne({ email });
  
     const userToUpdate = await User.findOne({ userId: user.userId });

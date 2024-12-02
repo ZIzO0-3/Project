@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Marks</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="Student Marks Page" name="description">
+    <link href="https://cdn.glitch.global/44000450-5b21-4d41-9441-1920bc9beab4/Picsart_24-11-29_09-29-16-961.png?v=1732865376299" rel="icon">
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/style.css" rel="stylesheet">
+
+    <style>
+        .table-container {
+            width: 100%;
+            margin: 20px auto;
+        }
+
+        .table-container table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table-container th,
+        .table-container td {
+            border: 1px solid #ddd;
+            text-align: center;
+            padding: 10px;
+        }
+
+        .table-container th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+
+        .section-title {
+            font-size: 18px;
+            margin: 20px 0 10px;
+            text-align: left;
+            color: #333;
+        }
+
+        .colored-cell {
+            background-color: #007bff;
+            color: white;
+            width: 20px;
+            height: 20px;
+            display: inline-block;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar Start -->
+    <nav class="navbar navbar-expand-lg bg-white navbar-light shadow sticky-top p-0">
+        <a href="/home" class="navbar-brand d-flex align-items-center px-4 px-lg-5">
+            <p class="m-0 fw-bold" style="font-size: 25px;">
+                <img src="https://cdn.glitch.global/44000450-5b21-4d41-9441-1920bc9beab4/Picsart_24-11-29_09-29-16-961.png?v=1732865376299" alt="" height="50px">Eslam<span style="color: #fb873f;">Mashhor</span>
+            </p>
+        </a>
+        <button type="button" class="navbar-toggler me-4" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+            <div class="navbar-nav ms-auto p-4 p-lg-0">
+                <a href="/home" class="nav-item nav-link">Home</a>
+                <a href="/about" class="nav-item nav-link">About</a>
+                <a href="/marks" class="nav-item nav-link active">Marks</a>
+                <a href="/contact" class="nav-item nav-link">Contact</a>
+                <a href="/login" class="nav-item nav-link"><i class="fa fa-user"></i></a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header Start -->
+    <div class="container-fluid bg-primary py-5 mb-5 page-header">
+        <div class="container py-5">
+            <div class="row justify-content-center">
+                <div class="col-lg-10 text-center">
+                    <h1 class="display-3 text-white animated slideInDown">Marks</h1>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb justify-content-center">
+                            <li class="breadcrumb-item"><a class="text-white" href="/home">Home</a></li>
+                            <li class="breadcrumb-item text-white active" aria-current="page">Marks</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Marks Content Start -->
+    <div class="container">
+  <h2>Your Marks</h2>
+  <% if (errorMessage) { %>
+    <div class="alert alert-danger">
+      <%= errorMessage %>
+    </div>
+  <% } else { %>
+    <div class="student-info">
+      <p><strong>Name:</strong> <%= student.username %></p>
+      <p><strong>Grade:</strong> <%= student.grade %></p>
+      <p><strong>National ID:</strong> <%= nationalId %></p>
+      <p><strong>Class:</strong> <%= student.class %></p>
+      <p><strong>School:</strong> الشهيد اسلام مشهور المتميزه</p>
+    </div>
+
+    <h3>Marks:</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Subject</th>
+          <th>Marks</th>
+          <th>Grade</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% Object.keys(marks).forEach(function(subject) { %>
+          <tr>
+            <td><%= subject %></td>
+            <td><%= marks[subject].marks %></td>
+            <td><%= marks[subject].grade %></td>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  <% } %>
+</div>
+            
+    <!-- Footer Start -->
+    <footer class="container-fluid bg-dark text-light footer pt-5 mt-5">
+        <div class="container py-5">
+            <div class="row g-5">
+                <div class="col-lg-4 col-md-6">
+                    <h4 class="text-white mb-3">Quick Links</h4>
+                    <a href="/about" class="text-light">About Us</a><br>
+                    <a href="/contact" class="text-light">Contact Us</a><br>
+                    <a href="/privacy" class="text-light">Privacy Policy</a>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <h4 class="text-white mb-3">Contact</h4>
+                    <p class="mb-2"><i class="fa fa-map-marker-alt me-3"></i>11 سيد أبو العلا، قسم النزهة، محافظة القاهرة</p>
+                    <p class="mb-2"><i class="fa fa-phone-alt me-3"></i>+20 0123456789</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
