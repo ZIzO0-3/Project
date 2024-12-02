@@ -84,33 +84,34 @@
     <% } %>
 
     <form id="uploadForm" action="/upload-monthly-marks" method="POST" enctype="multipart/form-data" class="mt-4">
-        <div class="mb-3">
-            <label for="subject" class="form-label">Select Subject</label>              
-            <select class="form-select" id="subject" name="subject" required>
-                <option value="hide">Select Subject</option> 
-                <% subjects.forEach(subject => { %>
-                    <option value="<%= subject %>"><%= subject.charAt(0).toUpperCase() + subject.slice(1) %></option>
-                <% }) %>
-            </select>
-        </div>
+    <div class="mb-3">
+        <label for="subject" class="form-label">Select Subject</label>              
+        <select class="form-select" id="subject" name="subject" required>
+            <option value="hide">Select Subject</option> 
+            <% subjects.forEach(subject => { %>
+                <option value="<%= subject %>"><%= subject.charAt(0).toUpperCase() + subject.slice(1) %></option>
+            <% }) %>
+        </select>
+    </div>
 
-        <div class="mb-3">
-            <label for="className" class="form-label">Class Name (e.g., 1a, 1b, 2c)</label>
-            <input type="text" id="classNames" name="className" class="form-control" placeholder="Enter class name" required>
-        </div>
+    <div class="mb-3">
+        <label for="classNames" class="form-label">Class Name (e.g., 1a, 1b, 2c)</label>
+        <input type="text" id="classNames" name="classNames" class="form-control" placeholder="Enter class name" required>
+    </div>
 
-        <div class="mb-3">
-            <label for="file" class="form-label">Upload Excel File</label>
-            <input type="file" id="file" name="file" class="form-control" accept=".xlsx" required>
-        </div>
+    <div class="mb-3">
+        <label for="file" class="form-label">Upload Excel File</label>
+        <input type="file" id="file" name="file" class="form-control" accept=".xlsx" required>
+    </div>
 
-        <!-- Hidden input for processed classes -->
-        <input type="hidden" id="processedClasses" name="processedClasses">
+    <!-- Hidden input for processed classes -->
+    <input type="hidden" id="processedClasses" name="processedClasses">
 
-        <div class="text-center">
-            <button type="submit" class="btn btn-primary">Upload</button>
-        </div>
-    </form>
+    <div class="text-center">
+        <button type="submit" class="btn btn-primary">Upload</button>
+    </div>
+</form>
+
 </div>
 <!-- Upload Section End -->
       
@@ -137,26 +138,27 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
     const form = document.getElementById('uploadForm');
-    const classNamesInput = document.getElementById('classNames');
-    const processedClassesInput = document.getElementById('processedClasses');
+const classNamesInput = document.getElementById('classNames');
+const processedClassesInput = document.getElementById('processedClasses');
 
-    form.addEventListener('submit', (e) => {
-                const classNamesValue = classNamesInput.value;
-       
-             console.log("Class Names Value:", classNamesValue);
-        
-        if (!classNamesValue) {
-            e.preventDefault();
-            alert("Class names are required.");
-            return;
-        }
+form.addEventListener('submit', (e) => {
+    const classNamesValue = classNamesInput.value;
 
-        const classNames = classNamesValue.split('/').map(className => className.trim());
+    console.log("Class Names Value:", classNamesValue);
 
-           console.log("Processed Classes:", classNames);
+    if (!classNamesValue) {
+        e.preventDefault();
+        alert("Class names are required.");
+        return;
+    }
 
-      processedClassesInput.value = JSON.stringify(classNames);
-    });
+    const classNames = classNamesValue.split('/').map(className => className.trim());
+
+    console.log("Processed Classes:", classNames);
+
+    processedClassesInput.value = JSON.stringify(classNames);
+});
+
 </script>
 
 

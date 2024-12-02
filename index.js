@@ -420,7 +420,6 @@ app.listen(PORT, () => {
 /*
 const https = require("https");
 const fs = require("fs");
-
 const fileUrl = "https://cdn.glitch.global/44000450-5b21-4d41-9441-1920bc9beab4/%D8%A7%D9%84%D8%B5%D9%81%20%D8%A7%D9%84%D8%AB%D8%A7%D9%86%D9%89%20%D8%A7%D9%84%D8%AB%D8%A7%D9%86%D9%88%D9%89.xlsx?v=1733130726812" ; // Replace with your file URL
 const localPath = "./data/2sec-2nd.xlsx"; // Change the destination as needed
 
@@ -433,4 +432,49 @@ https.get(fileUrl, (response) => {
   });
 });
 */
+const fs = require('fs');
 
+// Array of subjects to create folders for
+const subjects = [
+    'mathematics', 
+    'chemistry', 
+    'physics', 
+    'biology', 
+    'arabic', 
+    'EOL', 
+    'EAL', 
+    'French', 
+    'German'
+];
+
+// List of class names (could be dynamically provided, this is an example)
+const classNames = '1a/1b/1c/1d/2a/2b/2c/2d'; // Example input
+
+// Split the class names by '/' and trim any extra spaces
+let classNamesArray = classNames.split('/').map(className => className.trim());
+
+// Loop through each subject
+subjects.forEach(subject => {
+    // Path to the subject folder
+    const subjectFolder = path.join(__dirname, 'month-marks', subject);
+
+    // Check if the subject folder exists, if not, create it
+    if (!fs.existsSync(subjectFolder)) {
+        fs.mkdirSync(subjectFolder, { recursive: true });
+        console.log(`Created subject folder: ${subjectFolder}`);
+    }
+
+    // Loop through each class name and create corresponding class folders inside the subject folder
+    classNamesArray.forEach(className => {
+        const classFolder = path.join(subjectFolder, className);
+
+        // Check if the class folder exists, if not, create it
+        if (!fs.existsSync(classFolder)) {
+            fs.mkdirSync(classFolder, { recursive: true });
+            console.log(`Created class folder: ${classFolder}`);
+        } else (error) => {
+          
+            console.log(`Class folder already exists: ${classFolder}`);
+        }
+    });
+});

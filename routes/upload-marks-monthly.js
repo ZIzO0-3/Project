@@ -43,26 +43,52 @@ router.post('/upload-monthly-marks', isAuthenticated, upload.single('file'), asy
     const teacher = await Teacher.findOne({ email: req.session.user.email });
     const { subject, classNames } = req.body;
     const file = req.file;
-    if (!teacher) {
-      return res.redirect("/home") 
-    }
-let classNamesArray = classNames.split('/').map(className => className.trim());
 
-        console.log("Parsed classNames array:", classNamesArray);
-   const subjectFolder = path.join(__dirname, '../uploads/month-marks', subject);
-        if (!fs.existsSync(subjectFolder)) {
-            fs.mkdirSync(subjectFolder, { recursive: true });
-        }        
+    if (!teacher) {
+      return res.redirect("/home");
+    }
+
+    if (!classNames || !subject || !file) {
+      return res.status(400).send("Missing required fields.");
+    }
+
+    // Process classNames correctly
+    let classNamesArray = classNames.split('/').map(className => className.trim());
+
+    console.log("Parsed classNames array:", classNamesArray); // Add debugging
+
+    if (classNamesArray.length === 0) {
+      return res.status(400).send("No valid class names provided.");
+    }
+
+    const subjectFolder = path.join(__dirname, '../uploads/month-marks', subject);
+    if (!fs.existsSync(subjectFolder)) {
+        fs.mkdirSync(subjectFolder, { recursive: true });
+    }
+
     classNamesArray.forEach((className) => {
-            const classFolder = path.join(subjectFolder, className);
-            if (!fs.existsSync(classFolder)) {
-                fs.mkdirSync(classFolder, { recursive: true });
-            }          
-           
-      const filePath = path.join(classFolder, file.filename);
-            fs.renameSync(file.path, filePath);
-        });
-    console.log(`File uploaded to ${req.file.path}`);
+        if (!className) {
+            console.error("Skipping invalid class name:", className);
+            return;
+        }
+
+        const classFolder = path.join(subjectFolder, className);
+        if (!fs.existsSync(classFolder)) {
+            fs.mkdirSync(classFolder, { recursive: true });
+        }
+
+        // Check if the file already exists in the target directory
+        const filePath = path.join(classFolder, file.filename);
+        if (fs.existsSync(filePath)) {
+            console.log("File already exists in:", filePath);
+            return;
+        }
+
+        // Move the file to the class folder
+        fs.renameSync(file.path, filePath);
+        console.log(`File uploaded to ${filePath}`);
+    });
+
     console.log(`File uploaded successfully for classes: ${classNamesArray.join(', ')}`);
     res.redirect('/home');
   } catch (error) {
