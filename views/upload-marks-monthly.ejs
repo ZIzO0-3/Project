@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Upload Marks</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="Upload Marks Page" name="description">
+    <link href="https://cdn.glitch.global/44000450-5b21-4d41-9441-1920bc9beab4/Picsart_24-11-29_09-29-16-961.png?v=1732865376299" rel="icon">
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/style.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navbar Start -->
+    <nav class="navbar navbar-expand-lg bg-white navbar-light shadow sticky-top p-0">
+        <a href="/home" class="navbar-brand d-flex align-items-center px-4 px-lg-5">
+            <p class="m-0 fw-bold" style="font-size: 25px;">
+                <img src="https://cdn.glitch.global/44000450-5b21-4d41-9441-1920bc9beab4/Picsart_24-11-29_09-29-16-961.png?v=1732865376299" alt="" height="50px">Eslam<span style="color: #fb873f;">Mashhor</span>
+            </p>
+        </a>
+        <button type="button" class="navbar-toggler me-4" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+            <div class="navbar-nav ms-auto p-4 p-lg-0">
+                <a href="/home" class="nav-item nav-link">Home</a>
+                <a href="/about" class="nav-item nav-link">About</a>
+                <a href="/marks" class="nav-item nav-link">Marks</a>
+                <a href="/contact" class="nav-item nav-link">Contact</a>
+                <% if (user) { %>
+                    <div class="nav-item d-flex align-items-center">
+                        <% if (user.profilePhoto) { %>
+                            <a href="/profile" class="nav-link d-flex align-items-center">
+                                <img src="<%= user.profilePhoto %>" alt="Profile Photo" class="rounded-circle me-2" style="width: 35px; height: 35px; object-fit: cover;">
+                                <span><%= user.username %></span>
+                            </a>
+                        <% } else { %>
+                            <a href="/profile" class="nav-link d-flex align-items-center">
+                                <img src="https://cdn.glitch.global/44000450-5b21-4d41-9441-1920bc9beab4/9203764.png?v=1733040140957" alt="Default Profile Photo" class="rounded-circle me-2" style="width: 35px; height: 35px; object-fit: cover;">
+                                <span><%= user.username %></span>
+                            </a>
+                        <% } %>
+                        <form action="/logout" method="POST" class="ms-3">
+                            <button type="submit" class="btn btn-outline-danger btn-sm">Log Out</button>
+                        </form>
+                    </div>
+                <% } else { %>
+                    <a href="/login" class="nav-item nav-link">
+                        <button class="btn btn-primary btn-sm">Log In</button>
+                    </a>
+                <% } %>
+            </div>
+        </div>
+    </nav>
+    <!-- Navbar End -->
+
+    <!-- Header Start -->
+    <div class="container-fluid bg-primary py-5 mb-5 page-header">
+        <div class="container py-5">
+            <div class="row justify-content-center">
+                <div class="col-lg-10 text-center">
+                    <h1 class="display-3 text-white animated slideInDown">Upload Marks</h1>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb justify-content-center">
+                            <li class="breadcrumb-item"><a class="text-white" href="/home">Home</a></li>
+                            <li class="breadcrumb-item text-white active" aria-current="page">Upload Marks</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Header End -->
+
+    <<!-- Upload Section Start -->
+<div class="container">
+    <h2 class="text-center">Upload Marks for Classes</h2>
+    <% if (errorMessage) { %>
+        <div class="alert alert-danger">
+            <%= errorMessage %>
+        </div>
+    <% } %>
+
+    <form id="uploadForm" action="/upload-monthly-marks" method="POST" enctype="multipart/form-data" class="mt-4">
+        <div class="mb-3">
+            <label for="subject" class="form-label">Select Subject</label>              
+            <select class="form-select" id="subject" name="subject" required>
+                <option value="hide">Select Subject</option> 
+                <% subjects.forEach(subject => { %>
+                    <option value="<%= subject %>"><%= subject.charAt(0).toUpperCase() + subject.slice(1) %></option>
+                <% }) %>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="className" class="form-label">Class Name (e.g., 1a, 1b, 2c)</label>
+            <input type="text" id="classNames" name="className" class="form-control" placeholder="Enter class name" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="file" class="form-label">Upload Excel File</label>
+            <input type="file" id="file" name="file" class="form-control" accept=".xlsx" required>
+        </div>
+
+        <!-- Hidden input for processed classes -->
+        <input type="hidden" id="processedClasses" name="processedClasses">
+
+        <div class="text-center">
+            <button type="submit" class="btn btn-primary">Upload</button>
+        </div>
+    </form>
+</div>
+<!-- Upload Section End -->
+      
+    <!-- Footer Start -->
+    <footer class="container-fluid bg-dark text-light footer pt-5 mt-5">
+        <div class="container py-5">
+            <div class="row g-5">
+                <div class="col-lg-4 col-md-6">
+                    <h4 class="text-white mb-3">Quick Links</h4>
+                    <a href="/about" class="text-light">About Us</a><br>
+                    <a href="/contact" class="text-light">Contact Us</a><br>
+                    <a href="/privacy" class="text-light">Privacy Policy</a>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <h4 class="text-white mb-3">Contact</h4>
+                    <p class="mb-2"><i class="fa fa-map-marker-alt me-3"></i>11 سيد أبو العلا، قسم النزهة، محافظة القاهرة</p>
+                    <p class="mb-2"><i class="fa fa-phone-alt me-3"></i>+20 0123456789</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <!-- Footer End -->
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+    const form = document.getElementById('uploadForm');
+    const classNamesInput = document.getElementById('classNames');
+    const processedClassesInput = document.getElementById('processedClasses');
+
+    form.addEventListener('submit', (e) => {
+                const classNamesValue = classNamesInput.value;
+       
+             console.log("Class Names Value:", classNamesValue);
+        
+        if (!classNamesValue) {
+            e.preventDefault();
+            alert("Class names are required.");
+            return;
+        }
+
+        const classNames = classNamesValue.split('/').map(className => className.trim());
+
+           console.log("Processed Classes:", classNames);
+
+      processedClassesInput.value = JSON.stringify(classNames);
+    });
+</script>
+
+
+</body>
+</html>

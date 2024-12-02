@@ -20,7 +20,7 @@ const app = express();
 const editProfileRoutes = require('./routes/edit-profile');
 const ProfileRoutes = require('./routes/profile');
 const StudentMarks  = require('./routes/marks');
-
+const UploadMarksMonthly  = require('./routes/upload-marks-monthly');
 app.use(flash());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -61,6 +61,7 @@ app.use('/', teacherRoutes);
 app.use('/', editProfileRoutes);
 app.use('/', ProfileRoutes);
 app.use('/', StudentMarks);
+app.use('/', UploadMarksMonthly);
 app.use('/api/auth', authRoutes);
 app.use('/reset-password', resetPasswordRoute);
 app.use('/uploads', express.static('uploads'));
