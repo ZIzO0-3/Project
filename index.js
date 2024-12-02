@@ -1,3 +1,4 @@
+
 const express = require('express');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
@@ -450,31 +451,66 @@ const subjects = [
 // List of class names (could be dynamically provided, this is an example)
 const classNames = '1a/1b/1c/1d/2a/2b/2c/2d'; // Example input
 
-// Split the class names by '/' and trim any extra spaces
 let classNamesArray = classNames.split('/').map(className => className.trim());
+
+// Log current directory and check if __dirname is correct
+console.log('Current directory:', __dirname);
+
+// Check if 'month-marks' folder exists, if not, create it
+const monthMarksDir = path.join(__dirname, 'month-marks');
+if (!fs.existsSync(monthMarksDir)) {
+    try {
+        fs.mkdirSync(monthMarksDir);
+        console.log(`Created 'month-marks' directory: ${monthMarksDir}`);
+    } catch (err) {
+        console.error('Error creating month-marks directory:', err);
+    }
+}
 
 // Loop through each subject
 subjects.forEach(subject => {
     // Path to the subject folder
-    const subjectFolder = path.join(__dirname, 'month-marks', subject);
+    const subjectFolder = path.join(monthMarksDir, subject);
 
-    // Check if the subject folder exists, if not, create it
-    if (!fs.existsSync(subjectFolder)) {
+    // Log folder creation step
+    console.log(`Preparing to create subject folder: ${subjectFolder}`);
+
+    try {
+        // Delete the subject folder if it already exists (force recreate)
+        if (fs.existsSync(subjectFolder)) {
+            fs.rmSync(subjectFolder, { recursive: true }); // Use fs.rm instead of rmdir
+            console.log(`Deleted existing folder: ${subjectFolder}`);
+        }
+
+        // Create the subject folder
         fs.mkdirSync(subjectFolder, { recursive: true });
         console.log(`Created subject folder: ${subjectFolder}`);
+
+        // Loop through each class name and create corresponding class folders inside the subject folder
+        classNamesArray.forEach(className => {
+            const classFolder = path.join(subjectFolder, className);
+
+            try {
+                // Delete the class folder if it exists
+                if (fs.existsSync(classFolder)) {
+                    fs.rmSync(classFolder, { recursive: true });
+                    console.log(`Deleted existing folder: ${classFolder}`);
+                }
+
+                // Create the class folder
+                fs.mkdirSync(classFolder, { recursive: true });
+                console.log(`Created class folder: ${classFolder}`);
+            } catch (err) {
+                console.error(`Error creating class folder ${classFolder}:`, err);
+            }
+        });
+    } catch (err) {
+        console.error(`Error with subject folder ${subjectFolder}:`, err);
     }
+});
 
-    // Loop through each class name and create corresponding class folders inside the subject folder
-    classNamesArray.forEach(className => {
-        const classFolder = path.join(subjectFolder, className);
-
-        // Check if the class folder exists, if not, create it
-        if (!fs.existsSync(classFolder)) {
-            fs.mkdirSync(classFolder, { recursive: true });
-            console.log(`Created class folder: ${classFolder}`);
-        } else (error) => {
-          
-            console.log(`Class folder already exists: ${classFolder}`);
-        }
-    });
+// After running, check if the directories are actually created by listing the contents of the base directory
+console.log('Listing the contents of month-marks folder:');
+fs.readdirSync(monthMarksDir).forEach(file => {
+    console.log(file);
 });

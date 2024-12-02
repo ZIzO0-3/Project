@@ -8,15 +8,25 @@ const Teacher = require('../models/Teacher');
 const User = require('../models/User');
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    const { subject, className } = req.body;
-    const dir = `./month-marks/${subject}/${className}`;
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true }); 
+    const { subject, classNames } = req.body;
+    const classNamesArray = classNames.split('/').map(className => className.trim());
+    const subjectDir = `./month-marks/${subject}`;
+
+     if (!fs.existsSync(subjectDir)) {
+      fs.mkdirSync(subjectDir, { recursive: true });
     }
-    cb(null, dir); 
+
+    classNamesArray.forEach(className => {
+      const classDir = `${subjectDir}/${className}`;
+      if (!fs.existsSync(classDir)) {
+        fs.mkdirSync(classDir, { recursive: true });
+      }
+    });
+
+        cb(null, subjectDir); 
   },
   filename: (req, file, cb) => {
-    cb(null, `${Date.now()}-${file.originalname}`);
+    cb(null, file.originalname); // Use the original filename without modification
   },
 });
 
@@ -37,7 +47,6 @@ router.get('/upload-monthly-marks', isAuthenticated, async (req, res) => {
   req.session.errorMessage = null; 
   res.render('upload-marks-monthly', {errorMessage: errorMessage, user:userdata, teacher, subjects });
 });
-
 router.post('/upload-monthly-marks', isAuthenticated, upload.single('file'), async (req, res) => {
   try {
     const teacher = await Teacher.findOne({ email: req.session.user.email });
@@ -53,40 +62,33 @@ router.post('/upload-monthly-marks', isAuthenticated, upload.single('file'), asy
     }
 
     // Process classNames correctly
-    let classNamesArray = classNames.split('/').map(className => className.trim());
-
-    console.log("Parsed classNames array:", classNamesArray); // Add debugging
+    const classNamesArray = classNames.split('/').map(className => className.trim());
 
     if (classNamesArray.length === 0) {
       return res.status(400).send("No valid class names provided.");
     }
 
-    const subjectFolder = path.join(__dirname, '../uploads/month-marks', subject);
-    if (!fs.existsSync(subjectFolder)) {
-        fs.mkdirSync(subjectFolder, { recursive: true });
-    }
+    const subjectFolder = path.join(__dirname, '../month-marks', subject);
 
-    classNamesArray.forEach((className) => {
-        if (!className) {
-            console.error("Skipping invalid class name:", className);
-            return;
-        }
+    // Loop through each class and ensure the class folder exists inside the subject folder
+    classNamesArray.forEach(className => {
+      const classFolder = path.join(subjectFolder, className);
 
-        const classFolder = path.join(subjectFolder, className);
-        if (!fs.existsSync(classFolder)) {
-            fs.mkdirSync(classFolder, { recursive: true });
-        }
+      // Ensure that the class folder exists, otherwise create it
+      if (!fs.existsSync(classFolder)) {
+        fs.mkdirSync(classFolder, { recursive: true });
+      }
 
-        // Check if the file already exists in the target directory
-        const filePath = path.join(classFolder, file.filename);
-        if (fs.existsSync(filePath)) {
-            console.log("File already exists in:", filePath);
-            return;
-        }
+      // Check if the file already exists in the target directory
+      const filePath = path.join(classFolder, file.originalname); // Use original filename
+      if (fs.existsSync(filePath)) {
+        console.log("File already exists in:", filePath);
+        return; // Skip if file already exists
+      }
 
-        // Move the file to the class folder
-        fs.renameSync(file.path, filePath);
-        console.log(`File uploaded to ${filePath}`);
+      // Move the file to the class folder with the same name
+      fs.renameSync(file.path, filePath);
+      console.log(`File uploaded to ${filePath}`);
     });
 
     console.log(`File uploaded successfully for classes: ${classNamesArray.join(', ')}`);
